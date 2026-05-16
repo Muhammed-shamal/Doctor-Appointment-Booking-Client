@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import Logo from "../assets/react.svg";
+import Logo from "../assets/vite.svg";
 
 const Loader = () => {
  const [visible, setVisible] = useState(true);

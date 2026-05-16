@@ -16,8 +16,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { Link, useLocation } from "react-router-dom";
-import Logo from "../../assets/logos/logo1.png";
-import Logo2 from "../../assets/logos/logo1.png";
+import Logo from "../../assets/vite.svg";
+import Logo2 from "../../assets/vite.svg";
 import { menu } from "./menu";
 
 const Sidebar = ({

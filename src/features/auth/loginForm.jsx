@@ -20,11 +20,10 @@ import {
 import {  useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from './authThunks';
-import logo from '../../assets/logos/logo1.png'
-import bgImage from "../../assets/images/bg3.jpg";
-import WSButton from '../../components/WS/Buttons/WSButton';
-import WSTextField from '../../components/WS/TextBox/WSTextField';
-import { TextType } from '../../components/WS/TextBox/types';
+import logo from '../../assets/vite.svg'
+import MButton from '../../components/Buttons/MBtn';
+import MTextField from '../../components/TextBox/MTextField';
+import { TextType } from '../../components/TextBox/types';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -60,7 +59,7 @@ const Login = () => {
           position: 'absolute',
           width: '100%',
           height: '100%',
-          background: `url(${bgImage}) no-repeat bottom`,
+          // background: `url(${bgImage}) no-repeat bottom`,
           backgroundSize: 'cover',
           opacity: 0.8
         }
@@ -110,7 +109,7 @@ const Login = () => {
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               {/* Email Field */}
-              <WSTextField
+              <MTextField
                 name="email"
                 startSuffix={<Email color="action" />}
                 control={control}
@@ -136,7 +135,7 @@ const Login = () => {
               />
 
               {/* Password Field */}
-              <WSTextField name="password" label={"Password"}
+              <MTextField name="password" label={"Password"}
                 control={control}
                 type={showPassword ? TextType.Text : TextType.Password}
                 rules={{
@@ -178,7 +177,7 @@ const Login = () => {
               </Box> */}
 
               {/* Submit Button */}
-              <WSButton loading={loading} label={loading ? "Signing in..." : "Sign In"}
+              <MButton loading={loading} label={loading ? "Signing in..." : "Sign In"}
                 type="submit" size="large"
                 variant="contained" startIcon={!loading && <Person />}
                 sx={{

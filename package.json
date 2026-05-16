@@ -20,6 +20,10 @@
     "file-saver": "^2.0.5",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-hook-form": "^7.76.0",
+    "react-imask": "^7.6.1",
+    "react-number-format": "^5.4.5",
+    "react-phone-number-input": "^3.4.16",
     "react-redux": "^9.3.0",
     "react-router-dom": "^7.15.1",
     "xlsx": "^0.18.5"

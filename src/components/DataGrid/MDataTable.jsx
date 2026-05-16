@@ -7,7 +7,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 
-const DataTable = ({
+const MDataTable = ({
   data, loading, columns, actions, FileUrl,
   page, onPageChange, filters, sort, search, title,
   totalPages, rowsPerPage, setRowsPerPage, getLink, exportToExcel = false }) => {
@@ -424,4 +424,4 @@ const DataTable = ({
   );
 };
 
-export default DataTable;
+export default MDataTable;
