@@ -7,6 +7,7 @@ import Login from './features/auth/loginForm';
 import Footer from './components/Dashboard/Footer';
 import Dashboard from './features/dashboard/dashboard';
 import NotFound from './features/NotFound';
+import Register from './features/auth/registerForm';
 
 function App() {
   const { token } = useSelector((state) => state.auth);
@@ -15,7 +16,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={token ? <Navigate to="/" /> : <Login />} />
-        {/* <Route path="/register" element={token ? <Navigate to="/" /> : <Login />} /> */}
+        <Route path="/register" element={token ? <Navigate to="/" /> : <Register />} />
 
         <Route element={<PrivateRoute token={token} />}>
           <Route element={<DashboardLayout />}>
