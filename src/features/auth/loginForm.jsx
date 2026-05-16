@@ -180,10 +180,10 @@ const Login = () => {
               sx={{
                 mx: "auto",
                 mb: 1.5,
-                width: 80,
-                height: 80,
-                border: `3px solid ${theme.palette.primary.main}`,
-                boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.25)}`,
+                // width: 80,
+                // height: 80,
+                // border: `3px solid ${theme.palette.primary.main}`,
+                // boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.25)}`,
                 transition: "all 0.3s ease",
                 "&:hover": {
                   transform: "scale(1.08)",
@@ -382,7 +382,7 @@ const Login = () => {
                 variant="contained"
                 startIcon={!loading && <VpnLock sx={{ fontSize: 20 }} />}
                 sx={{
-                  py: 1.5,
+                  py: 1,
                   fontWeight: 700,
                   borderRadius: 2,
                   fontSize: "0.95rem",
@@ -415,7 +415,7 @@ const Login = () => {
                 fullWidth
               />
 
-              {/* Security Badge */}
+              {/* Regiser Account */}
               <Box
                 sx={{
                   mt: 3,
@@ -424,23 +424,20 @@ const Login = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 0.5,
                 }}
               >
-                <VpnLock
-                  sx={{
-                    fontSize: 16,
-                    color: theme.palette.success.main,
-                  }}
-                />
                 <Typography
                   variant="caption"
                   sx={{
-                    color: theme.palette.text.secondary,
-                    fontWeight: 500,
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    textDecoration: "underline",
                   }}
+                  component={Link}
+                  to="/register"
                 >
-                  Secure & encrypted connection
+                  Don’t have an account? Register here
                 </Typography>
               </Box>
             </form>

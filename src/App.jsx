@@ -15,6 +15,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={token ? <Navigate to="/" /> : <Login />} />
+        {/* <Route path="/register" element={token ? <Navigate to="/" /> : <Login />} /> */}
 
         <Route element={<PrivateRoute token={token} />}>
           <Route element={<DashboardLayout />}>
