@@ -6,7 +6,7 @@ export const registerUser = createAsyncThunk(
   'auth/RegisterUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL.BASE_URL}auth/register`, credentials);
+      const response = await axios.post(`${API_URL.BASE_URL}/auth/register`, credentials);
       return response.data;
     } catch (error) {
       console.error('Login error:', error.response?.data);
@@ -19,11 +19,24 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL.BASE_URL}auth/login`, credentials);
+      const response = await axios.post(`${API_URL.BASE_URL}/auth/login`, credentials);
       return response.data;
     } catch (error) {
       console.error('Login error:', error.response?.data);
       return rejectWithValue(error.response?.data?.message || 'Login failed! Please try again!');
+    }
+  }
+);
+
+export const getMe = createAsyncThunk(
+  'auth/me',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get('/auth/me');
+      console.log('get me response',response);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'failed to fetch profile!');
     }
   }
 );
@@ -36,6 +49,26 @@ export const logoutUser = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Login failed Please try again!');
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL.BASE_URL}/auth/forgot-password`,
+        { email }
+      );
+
+      console.log('response forgot',response)
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to send reset password link"
+      );
     }
   }
 );

@@ -40,35 +40,4 @@ function handleAutoLogout() {
   store.dispatch(logout());
 }
 
-export const settingsAPI = {
-  get: (projectId) => axiosInstance.get(`/settings/getBy/${projectId}`),
-  update: (projectId, settings) =>
-    axiosInstance.put(`/settings/update/${projectId}`, settings),
-  testConnection: (data) =>
-    axiosInstance.post(`/settings/test-connection`, data),
-  getConnectionStatus: (projectId) =>
-    api.get(`/settings/connection-status/${projectId}`),
-  bulkUpdate: (projectId, updates) =>
-    api.patch(`/settings/bulk-update/${projectId}`, { updates }),
-  reset: (projectId) => api.delete(`/settings/reset/${projectId}`),
-};
-
-// Add to services/api.js
-export const messagingAPI = {
-  sendTestMessage: (data) =>
-    axiosInstance.post("/messaging/send-test-message", data),
-  sendBulkMessages: (data) =>
-    axiosInstance.post("/messaging/send-bulk-messages", data),
-  sendTemplateMessage: (data) =>
-    axiosInstance.post("/messaging/send-template-message", data),
-  getMessageStatus: (messageId, provider, credentials) =>
-    axiosInstance.get(
-      `/messaging/message-status/${messageId}?provider=${provider}&credentials=${JSON.stringify(credentials)}`,
-    ),
-};
-
-export const mailAPI = {
-  sendTest: (data) => axiosInstance.post(`/settings/mail/send/test`, data),
-};
-
 export default axiosInstance;

@@ -12,24 +12,29 @@ import {
   useMediaQuery,
   Stack,
   alpha,
+  Divider,
+  LinearProgress,
 } from "@mui/material";
 import {
   Visibility,
   VisibilityOff,
   Email,
+  Lock,
   Person,
   LockReset,
+  VpnLock,
 } from "@mui/icons-material";
 
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "./authThunks";
+import { forgotPassword, loginUser } from "./authThunks";
 import logo from "../../assets/vite.svg";
 import MButton from "../../components/Buttons/MBtn";
 import MTextField from "../../components/TextBox/MTextField";
 import { TextType } from "../../components/TextBox/types";
 import { Link } from "react-router-dom";
 import ForgotPassword from "./ForgotPassword";
+import { validations } from "../../common/commonFunction";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -59,37 +64,30 @@ const Login = () => {
 
   const handleForgotPasswordSubmit = async (email) => {
     console.log("Password reset requested for:", email);
-    // try {
-    //   setLoading(true);
+    try {
+      const response = await forgotPassword(email);
 
-    //   const request = {
-    //     email: email,
-    //   };
+      console.log("Forgot password response:", response);
 
-    //   const response = await callAPI(
-    //     "Vyapar/User/forgot-password",
-    //     Method.POST,
-    //     request
-    //   );
-    //   console.log('Forgot password response:', response); // Debug log to check the API response
+      if (response) {
+        showMessage(
+          response?.message,
+          response.success === true ? "success" : "error",
+        );
 
-    //   if (response) {
-    //     showMessage(
-    //       response?.message,
-    //       response.success === true ? "success" : "error"
-    //     );
-
-    //     if (response.success === true) {
-    //       navigate("/");
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to reset password:", error);
-    //   showMessage(error.response?.data?.message || "Failed to reset password", "error");
-    // } finally {
-    //   setLoading(false);
-    //   handleForgotPasswordClose();
-    // }
+        if (response.success === true) {
+          navigate("/");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to reset password:", error);
+      showMessage(
+        error.response?.data?.message || "Failed to reset password",
+        "error",
+      );
+    } finally {
+      handleForgotPasswordClose();
+    }
   };
 
   return (
@@ -100,146 +98,280 @@ const Login = () => {
         justifyContent: "center",
         alignItems: "center",
         px: 2,
+        py: 4,
         position: "relative",
         overflow: "hidden",
+        background: `linear-gradient(135deg, ${alpha(
+          theme.palette.primary.main,
+          0.08,
+        )} 0%, ${alpha(theme.palette.secondary.light, 0.05)} 100%)`,
         "&::before": {
           content: '""',
           position: "absolute",
+          top: "-50%",
+          right: "-50%",
           width: "100%",
           height: "100%",
-          // background: `url(${bgImage}) no-repeat bottom`,
-          backgroundSize: "cover",
-          opacity: 0.8,
+          background: `radial-gradient(circle, ${alpha(
+            theme.palette.primary.main,
+            0.1,
+          )} 0%, transparent 70%)`,
+          pointerEvents: "none",
+        },
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          bottom: "-50%",
+          left: "-50%",
+          width: "100%",
+          height: "100%",
+          background: `radial-gradient(circle, ${alpha(
+            theme.palette.secondary.light,
+            0.08,
+          )} 0%, transparent 70%)`,
+          pointerEvents: "none",
         },
       }}
     >
       <Fade in timeout={800}>
         <Card
-          elevation={10}
+          elevation={0}
           sx={{
             width: isSmallScreen ? "100%" : 450,
-            borderRadius: 4,
+            borderRadius: 3,
             overflow: "hidden",
             background: theme.palette.background.paper,
-            backdropFilter: "blur(10px)",
+            backdropFilter: "blur(20px)",
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+            boxShadow: `0 8px 32px ${alpha(
+              theme.palette.primary.main,
+              0.12,
+            )}, 0 2px 8px ${alpha(theme.palette.primary.main, 0.08)}`,
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            position: "relative",
+            zIndex: 1,
+            "&:hover": {
+              boxShadow: `0 12px 48px ${alpha(
+                theme.palette.primary.main,
+                0.16,
+              )}, 0 4px 12px ${alpha(theme.palette.primary.main, 0.12)}`,
+            },
           }}
         >
+          {/* Header Section */}
           <Box
             sx={{
-              py: 2,
+              background: `linear-gradient(135deg, ${alpha(
+                theme.palette.primary.main,
+                0.08,
+              )} 0%, ${alpha(theme.palette.primary.light, 0.04)} 100%)`,
+              py: 3,
+              px: 2,
               textAlign: "center",
+              borderBottom: `1px solid ${alpha(
+                theme.palette.primary.main,
+                0.08,
+              )}`,
+              position: "relative",
             }}
           >
             <Avatar
               src={logo}
               sx={{
                 mx: "auto",
-                width: 70,
-                height: 70,
-                border: "4px solid white",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                mb: 1.5,
+                width: 80,
+                height: 80,
+                border: `3px solid ${theme.palette.primary.main}`,
+                boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.25)}`,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.08)",
+                  boxShadow: `0 12px 32px ${alpha(
+                    theme.palette.primary.main,
+                    0.35,
+                  )}`,
+                },
               }}
             />
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                color: theme.palette.text.primary,
+                mb: 0.5,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Welcome Back
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: theme.palette.text.secondary,
+                fontWeight: 500,
+              }}
+            >
+              Access your account securely
+            </Typography>
           </Box>
 
+          {/* Form Section */}
           <CardContent sx={{ p: 4 }}>
-            <Box textAlign="center" mb={3}>
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                color="error"
-              >
-                Welcome Back
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Sign in to continue to your account
-              </Typography>
-            </Box>
-
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               {/* Email Field */}
-              <MTextField
-                name="email"
-                startSuffix={<Email color="action" />}
-                control={control}
-                label={"Email Address"}
-                type={TextType.Email}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: /\S+@\S+\.\S+/,
-                    message: "Enter a valid email",
-                  },
-                }}
-                sx={{
-                  marginBottom: 2,
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 2,
-                    transition: "all 0.3s ease",
-                  },
-                }}
-                isCapital={false}
-              />
+              <Box sx={{ mb: 2.5 }}>
+                <MTextField
+                  name="email"
+                  startSuffix={
+                    <Email
+                      sx={{
+                        color: theme.palette.primary.main,
+                        fontSize: 20,
+                      }}
+                    />
+                  }
+                  control={control}
+                  label={"Email Address"}
+                  type={TextType.Email}
+                  rules={{
+                    required: "Email is required",
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: "Enter a valid email",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      background: alpha(theme.palette.primary.main, 0.02),
+                      "&:hover": {
+                        background: alpha(theme.palette.primary.main, 0.04),
+                      },
+                      "&.Mui-focused": {
+                        background: alpha(theme.palette.primary.main, 0.06),
+                        boxShadow: `0 0 0 3px ${alpha(
+                          theme.palette.primary.main,
+                          0.1,
+                        )}`,
+                      },
+                    },
+                    "& .MuiOutlinedInput-input": {
+                      fontWeight: 500,
+                    },
+                  }}
+                  isCapital={false}
+                />
+              </Box>
 
               {/* Password Field */}
-              <MTextField
-                name="password"
-                label={"Password"}
-                control={control}
-                type={showPassword ? TextType.Text : TextType.Password}
-                rules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Minimum 6 characters required",
-                  },
-                }}
-                suffix={
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                }
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 2,
-                    transition: "all 0.3s ease",
-                  },
-                }}
-                isCapital={false}
-              />
+              <Box sx={{ mb: 2.5 }}>
+                <MTextField
+                  name="password"
+                  label={"Password"}
+                  control={control}
+                  rules={validations.password}
+                  type={showPassword ? TextType.Text : TextType.Password}
+                  suffix={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                        sx={{
+                          color: theme.palette.primary.main,
+                          transition: "all 0.2s ease",
+                          "&:hover": {
+                            background: alpha(theme.palette.primary.main, 0.08),
+                          },
+                        }}
+                      >
+                        {showPassword ? (
+                          <VisibilityOff sx={{ fontSize: 20 }} />
+                        ) : (
+                          <Visibility sx={{ fontSize: 20 }} />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      background: alpha(theme.palette.primary.main, 0.02),
+                      "&:hover": {
+                        background: alpha(theme.palette.primary.main, 0.04),
+                      },
+                      "&.Mui-focused": {
+                        background: alpha(theme.palette.primary.main, 0.06),
+                        boxShadow: `0 0 0 3px ${alpha(
+                          theme.palette.primary.main,
+                          0.1,
+                        )}`,
+                      },
+                    },
+                    "& .MuiOutlinedInput-input": {
+                      fontWeight: 500,
+                    },
+                  }}
+                  isCapital={false}
+                />
+              </Box>
 
               {/* Forgot Password Link */}
               <Stack
                 direction="row"
                 justifyContent="flex-end"
-                sx={{ mt: 1, mb: 2 }}
+                sx={{ mt: 1, mb: 3 }}
               >
-                <Link
+                <Box
                   component="button"
-                  type="button"
                   onClick={handleForgotPasswordOpen}
+                  type="button"
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 0.5,
+                    gap: 0.6,
+                    background: "none",
+                    border: "none",
                     color: theme.palette.primary.main,
                     textDecoration: "none",
-                    fontSize: "0.8rem",
-                    fontWeight: 500,
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    padding: "4px 8px",
+                    borderRadius: 1,
+                    transition: "all 0.2s ease",
                     "&:hover": {
-                      textDecoration: "underline",
+                      background: alpha(theme.palette.primary.main, 0.08),
+                      transform: "translateX(2px)",
                     },
                   }}
                 >
                   <LockReset sx={{ fontSize: 16 }} />
                   Forgot Password?
-                </Link>
+                </Box>
               </Stack>
+
+              {/* Loading Progress */}
+              {loading && (
+                <LinearProgress
+                  sx={{
+                    mb: 2.5,
+                    borderRadius: 1,
+                    height: 4,
+                    background: alpha(theme.palette.primary.main, 0.08),
+                    "& .MuiLinearProgress-bar": {
+                      background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                      borderRadius: 1,
+                    },
+                  }}
+                />
+              )}
 
               {/* Submit Button */}
               <MButton
@@ -248,30 +380,69 @@ const Login = () => {
                 type="submit"
                 size="large"
                 variant="contained"
-                startIcon={!loading && <Person />}
+                startIcon={!loading && <VpnLock sx={{ fontSize: 20 }} />}
                 sx={{
-                  mt: 2,
                   py: 1.5,
-                  fontWeight: 600,
+                  fontWeight: 700,
                   borderRadius: 2,
-                  fontSize: "1rem",
+                  fontSize: "0.95rem",
                   textTransform: "uppercase",
-                  letterSpacing: 1,
-                  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.light} 90%)`,
-                  boxShadow: `0 3px 15px ${alpha(theme.palette.primary.main, 0.4)}`,
-                  transition: "all 0.3s ease",
+                  letterSpacing: 1.2,
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                  boxShadow: `0 4px 16px ${alpha(
+                    theme.palette.primary.main,
+                    0.35,
+                  )}`,
+                  transition:
+                    "all 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease",
                   "&:hover": {
-                    background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, ${theme.palette.primary.main} 90%)`,
-                    boxShadow: `0 5px 20px ${alpha(theme.palette.primary.main, 0.6)}`,
+                    background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                    boxShadow: `0 8px 24px ${alpha(
+                      theme.palette.primary.main,
+                      0.45,
+                    )}`,
                     transform: "translateY(-2px)",
                   },
+                  "&:active": {
+                    transform: "translateY(0px)",
+                  },
                   "&:disabled": {
-                    background: alpha(theme.palette.primary.main, 0.5),
+                    background: alpha(theme.palette.primary.main, 0.45),
                     boxShadow: "none",
+                    transform: "none",
                   },
                 }}
                 fullWidth
               />
+
+              {/* Security Badge */}
+              <Box
+                sx={{
+                  mt: 3,
+                  pt: 2.5,
+                  borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.08)}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 0.5,
+                }}
+              >
+                <VpnLock
+                  sx={{
+                    fontSize: 16,
+                    color: theme.palette.success.main,
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    fontWeight: 500,
+                  }}
+                >
+                  Secure & encrypted connection
+                </Typography>
+              </Box>
             </form>
           </CardContent>
         </Card>
