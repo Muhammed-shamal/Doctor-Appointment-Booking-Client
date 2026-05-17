@@ -27,7 +27,7 @@ const Sidebar = ({
   handleCollapse,
   handleDrawerToggle,
   collapse,
-  drawerWidth = 270,
+  drawerWidth = 250,
 
   textColor,
   hoverColor,
@@ -81,7 +81,7 @@ const Sidebar = ({
     }, 10);
   };
 
-  const menu = getMenu(user.role);
+  const menu = getMenu(user.role || "patient");
 
   return (
     <Drawer

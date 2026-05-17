@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { API_URL } from './constant';
+import { refreshInstance } from './axiosInstance';
 
 class AuthService {
   constructor() {
@@ -35,9 +36,7 @@ class AuthService {
     try {
       console.log('try to refresh reques')
       // Server reads refresh token from HttpOnly cookie
-      const response = await axios.post(`${API_URL.BASE_URL}/auth/refresh-token`, {}, {
-        withCredentials: true
-      });
+      const response = refreshInstance.post("/auth/refresh-token");
 
       console.log('try to refresh the token',response);
       

@@ -10,18 +10,17 @@ import IconButton from "@mui/material/IconButton";
 
 import { account } from "../../_mock/account";
 import { logout } from "../../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../../context/SnackBar";
 import photo from "../../assets/vite.svg";
-import { getLocalValue, LoacalVariables } from "../../common/commonFunction";
+import { Menu } from "@mui/material";
 
 export default function AccountPopover() {
   const dispatch = useDispatch();
   const Toast = useToast();
   const [open, setOpen] = useState(null);
 
-  const userEmail = getLocalValue(LoacalVariables.Email);
-  const userName = getLocalValue(LoacalVariables.Name);
+  const { user } = useSelector((state) => state.auth);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -86,7 +85,7 @@ export default function AccountPopover() {
         </Box>
       </IconButton>
 
-      <Popover
+      <Menu
         open={!!open}
         anchorEl={open}
         onClose={handleClose}
@@ -103,10 +102,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {userName || account.displayName}
+            {user.name || account.displayName}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            {userEmail || account.email}
+            {user.email || account.email}
           </Typography>
         </Box>
 
@@ -120,7 +119,7 @@ export default function AccountPopover() {
         >
           Logout
         </MenuItem>
-      </Popover>
+      </Menu>
     </>
   );
 }

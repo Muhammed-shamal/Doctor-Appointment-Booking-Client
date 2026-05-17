@@ -8,6 +8,11 @@ const axiosInstance = axios.create({
   withCredentials: true, // Important for HttpOnly cookies
 });
 
+export const refreshInstance = axios.create({
+  baseURL: API_URL.BASE_URL,
+  withCredentials: true,
+});
+
 // Request interceptor
 axiosInstance.interceptors.request.use(async (config) => {
   // Skip auth header for refresh endpoint

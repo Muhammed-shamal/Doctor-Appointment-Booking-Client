@@ -19,6 +19,7 @@ function App() {
   useEffect(() => {
     // Try to refresh token on app load
     // This only makes ONE request regardless of how many components
+    console.log('try to refresh in app.jsx')
     dispatch(refreshTokenOnLoad());
   }, [dispatch]);
 
