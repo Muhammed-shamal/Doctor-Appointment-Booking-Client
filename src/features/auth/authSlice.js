@@ -112,7 +112,7 @@ const authSlice = createSlice({
 
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = action.payload.message;
+        state.success = action.payload.message || "Password reset link sent to email";
       })
 
       .addCase(forgotPassword.rejected, (state, action) => {

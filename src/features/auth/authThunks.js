@@ -53,7 +53,7 @@ export const forgotPassword = createAsyncThunk(
       );
 
       console.log("response forgot", response);
-      return response.data.result;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to send reset password link",
@@ -64,8 +64,9 @@ export const forgotPassword = createAsyncThunk(
 
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
-  async (password, { rejectWithValue }) => {
+  async ({ password, token }, { rejectWithValue }) => {
     try {
+      console.log("try to reset pass", password);
       const response = await axios.post(
         `${API_URL.BASE_URL}/auth/reset-password/${token}`,
         {
@@ -74,8 +75,9 @@ export const resetPassword = createAsyncThunk(
       );
 
       console.log("response reset pas", response);
-      return response.data.result;
+      return response.data;
     } catch (error) {
+      console.error("erset err", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to reset password",
       );

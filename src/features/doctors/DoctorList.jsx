@@ -112,6 +112,12 @@ export default function DoctorList() {
   // Table actions - Update and Delete
   const actions = [
     {
+      label: "View",
+      handler: (doctor) => {
+        navigate(`/doctor/detail/${doctor._id}`);
+      },
+    },
+    {
       label: "Edit",
       handler: (doctor) => {
         navigate(`/doctors/${doctor._id}`);

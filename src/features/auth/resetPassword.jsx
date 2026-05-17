@@ -16,6 +16,8 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { resetPassword } from "./authThunks";
 import { useDispatch } from "react-redux";
 import MTextField from "../../components/TextBox/MTextField";
+import MButton from "../../components/Buttons/MBtn";
+import authService from '../../api/auth';
 
 function ResetPassword() {
   const { token } = useParams();
@@ -61,8 +63,12 @@ function ResetPassword() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      await dispatch(resetPassword(data.password));
+      console.log("try to reset pass", data);
+      await dispatch(
+        resetPassword({ password: data.password, token }),
+      ).unwrap();
 
+      authService.clearAuth();
       // Redirect to login page after a short delay
       setTimeout(() => {
         navigate("/login");
@@ -183,34 +189,14 @@ function ResetPassword() {
               isCapital={false}
             />
 
-            <Button
+            <MButton
               type="submit"
               fullWidth
               variant="contained"
               disabled={isSubmitting}
-              sx={{
-                mt: 2,
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: "1rem",
-                fontWeight: 600,
-                textTransform: "none",
-                transition: "all 0.3s ease",
-                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  boxShadow: theme.shadows[8],
-                },
-                "&:active": {
-                  transform: "translateY(0)",
-                },
-                "&.Mui-disabled": {
-                  background: alpha(theme.palette.primary.main, 0.5),
-                },
-              }}
-            >
-              {isSubmitting ? "Resetting Password..." : "Reset Password"}
-            </Button>
+              label={isSubmitting ? "Resetting Password..." : "Reset Password"}
+              size="medium"
+            />
           </form>
         </Paper>
       </Box>
