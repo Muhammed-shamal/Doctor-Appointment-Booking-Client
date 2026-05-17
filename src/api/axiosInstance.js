@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_URL } from "./constant";
 import { store } from "../redux/store";
-import { logout } from "../features/auth/authSlice";
+import { logout, setAccessToken } from "../features/auth/authSlice";
 
 const axiosInstance = axios.create({
   baseURL: API_URL.BASE_URL,

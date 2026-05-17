@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { forgotPassword, loginUser } from "./authThunks";
+import { forgotPassword, loginUser, registerUser } from "./authThunks";
 import { LoacalVariables, setLocalValues } from "../../common/commonFunction";
 
 const userStorage = localStorage.getItem("user");
@@ -53,6 +53,24 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
+      // REGISTER
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(registerUser.fulfilled, (state, action) => {
+        const payload = action.payload.data;
+
+        state.loading = false;
+        state.success = message;
+      })
+
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -78,10 +96,7 @@ const authSlice = createSlice({
 
         setLocalValues(LoacalVariables.UserId, user.id || "");
 
-        setLocalValues(
-          LoacalVariables.UserType,
-          user.role || "patient",
-        );
+        setLocalValues(LoacalVariables.UserType, user.role || "patient");
 
         setLocalValues(LoacalVariables.Name, user.username || "");
 
@@ -118,5 +133,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearAuthError, clearAuthSuccess } = authSlice.actions;
+export const { setAccessToken, logout, clearAuthError, clearAuthSuccess } =
+  authSlice.actions;
 export default authSlice.reducer;

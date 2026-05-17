@@ -6,11 +6,12 @@ export const registerUser = createAsyncThunk(
   'auth/RegisterUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL.BASE_URL}/auth/register`, credentials);
+      const response = await axios.post(`${API_URL.BASE_URL}/auth/developer/register/QwertyuioP`, credentials);
+      console.log("response from register",response);
       return response.data;
     } catch (error) {
-      console.error('Login error:', error.response?.data);
-      return rejectWithValue(error.response?.data?.message || 'Login failed! Please try again!');
+      console.error('Register error:', error.response?.data);
+      return rejectWithValue(error.response?.data?.message || 'Register failed! Please try again!');
     }
   }
 );
