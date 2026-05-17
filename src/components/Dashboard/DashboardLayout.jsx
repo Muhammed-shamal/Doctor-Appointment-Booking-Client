@@ -17,11 +17,6 @@ import BottomBar from "./AppBar";
 const DashboardLayout = () => {
   const theme = useTheme();
 
-  const iconColor = "#fff";
-  const hoverTextColor = "#fff";
-  const backgroundColor = "#fff";
-  const boxShadowColor = "rgba(209, 200, 200, 0.6)";
-
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [open, setOpen] = useState(!isSmallScreen);
@@ -46,10 +41,10 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", }}>
+    <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#F9FAFB" }}>
 
       {!isSmallScreen && <Navbar
-        backgroundColor={backgroundColor}
+        backgroundColor="#FFFFFF"
         collapse={collapse}
       />}
       
@@ -60,26 +55,28 @@ const DashboardLayout = () => {
         handleDrawerToggle={handleDrawerToggle}
         open={open}
         // bellow for color changes
-        backgroundColor={backgroundColor}
-        boxShadowColor={boxShadowColor}
+        backgroundColor="#FFFFFF"
+        boxShadowColor="rgba(0, 0, 0, 0.08)"
         hoverColor={theme.palette.primary.main}
-        hoverTextColor={hoverTextColor}
+        hoverTextColor="#fff"
         primaryColor={theme.palette.primary.main}
         secondaryColor={theme.palette.secondary.main}
         selectedBackgroundColor={theme.palette.primary.main}
         textColor={theme.palette.primary.main}       
-         textOneColor={theme.palette.primary.mainOne}
+        textOneColor={theme.palette.primary.main}
 
-        iconColor={iconColor}
+        iconColor="#fff"
       />      
 
       {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
-          marginTop: !isSmallScreen ? "5rem" : "0.7rem", // Offset for AppBar height
-          overflowY: "auto", // Enable scrolling for content only
-          marginLeft: isSmallScreen ? "0rem" : collapse ? "7rem" : "19rem",
+          marginTop: !isSmallScreen ? "4.5rem" : "0.7rem",
+          overflowY: "auto",
+          marginLeft: isSmallScreen ? "0rem" : collapse ? "6rem" : "18rem",
+          padding: { xs: "16px", sm: "24px" },
+          transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
         <Outlet />

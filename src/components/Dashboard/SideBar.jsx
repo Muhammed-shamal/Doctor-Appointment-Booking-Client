@@ -10,6 +10,7 @@ import {
   useMediaQuery,
   useTheme,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -92,14 +93,14 @@ const Sidebar = ({
       sx={{
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: collapse ? 72 : drawerWidth,
+          width: collapse ? 80 : drawerWidth,
           boxSizing: "border-box",
-          backgroundColor: backgroundColor,
-          color: "#fff",
+          backgroundColor: "#FFFFFF",
+          color: "#1F2937",
           overflowX: "hidden",
-          transition: "width 0.3s ease",
-          borderRight: "none",
-          boxShadow: "2px 0 8px rgba(0,0,0,0.2)",
+          transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          borderRight: "1px solid #E5E7EB",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
         },
       }}
     >
@@ -109,20 +110,23 @@ const Sidebar = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          borderBottom: "1px solid",
-          borderColor: "divider",
+          borderBottom: "1px solid #E5E7EB",
+          bg: "#F9FAFB",
+          padding: "0 12px",
         }}
       >
         <Box
           width={collapse ? 40 : 60}
           height={collapse ? 40 : 40}
           sx={{
-            height: 62,
-            borderRadius: "50%",
+            height: 50,
+            borderRadius: "12px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            bgcolor: "#A6CE39", // optional light green background
+            background: "linear-gradient(135deg, #47A065 0%, #6BC58A 100%)",
+            boxShadow: "0 4px 12px rgba(71, 160, 101, 0.3)",
+            transition: "all 0.3s ease",
           }}
         >
           <Box
@@ -136,67 +140,83 @@ const Sidebar = ({
         </Box>
       </Box>
 
-      <List>
+      <List sx={{ px: 1, py: 2 }}>
         {menu.staticMenu.map((item) => (
           <React.Fragment key={item.id}>
             <li
-              id={`menu-item-${item.id}`} // Add unique ID
-              style={{ padding: 2 }}
+              id={`menu-item-${item.id}`}
+              style={{ padding: 2, listStyle: "none" }}
               onMouseEnter={() => handleMouseEnter(item.id)}
-              //   onMouseLeave={handleMouseLeave}
             >
-              <ListItemButton
-                component={Link}
-                to={item.path || "#"}
-                onClick={() => item.children && handleToggleChildMenu(item.id)}
-                sx={{
-                  my: 0.5,
-                  borderRadius: "10px",
-                  justifyContent: collapse ? "center" : "flex-start",
-                  px: collapse ? 1.5 : 2.5,
-                  backgroundColor: isSelected(item.path)
-                    ? selectedBackgroundColor
-                    : "transparent", // blue-600 for active
-                  color: isSelected(item.path) ? "#fff" : textOneColor,
-                  transition: "all 0.2s ease-in-out",
-                  "&:hover": {
-                    backgroundColor: hoverColor, // gray-700 hover
-                    color: "#fff",
-                  },
-                }}
-              >
-                <ListItemIcon
+              <Tooltip title={collapse ? item.label : ""} placement="right">
+                <ListItemButton
+                  component={Link}
+                  to={item.path || "#"}
+                  onClick={() => item.children && handleToggleChildMenu(item.id)}
                   sx={{
-                    minWidth: 0,
-                    mr: collapse ? 0 : 1.5,
-                    justifyContent: "center",
-                    color: item.label === "Logout" ? "red" : "#475569",
+                    my: 0.75,
+                    borderRadius: "10px",
+                    justifyContent: collapse ? "center" : "flex-start",
+                    px: collapse ? 1.5 : 2,
+                    py: 1.2,
+                    backgroundColor: isSelected(item.path)
+                      ? "#47A065"
+                      : "transparent",
+                    color: isSelected(item.path) ? "#fff" : "#6B7280",
+                    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "&:hover": {
+                      backgroundColor: isSelected(item.path)
+                        ? "#2E7D4F"
+                        : "#F3F4F6",
+                      color: isSelected(item.path) ? "#fff" : "#1F2937",
+                    },
                   }}
                 >
-                  <item.icon fontSize="small" />
-                </ListItemIcon>
-                {!collapse && (
-                  <ListItemText
-                    primary={item.label}
+                  <ListItemIcon
                     sx={{
-                      "& .MuiTypography-root": {
-                        fontSize: " 14px",
-                        color: "black",
-                      },
+                      minWidth: 0,
+                      mr: collapse ? 0 : 2,
+                      justifyContent: "center",
+                      color:
+                        item.label === "Logout"
+                          ? "#EF4444"
+                          : isSelected(item.path)
+                          ? "#fff"
+                          : "#6B7280",
+                      transition: "color 0.25s ease",
                     }}
-                  />
-                )}
-
-                {item.children && !collapse && (
-                  <ListItemIcon>
-                    {openChildMenus[item.id] ? (
-                      <ExpandMoreIcon sx={{ color: textColor }} />
-                    ) : (
-                      <ExpandLessIcon sx={{ color: textColor }} />
-                    )}
+                  >
+                    <item.icon fontSize="small" />
                   </ListItemIcon>
-                )}
-              </ListItemButton>
+                  {!collapse && (
+                    <ListItemText
+                      primary={item.label}
+                      sx={{
+                        "& .MuiTypography-root": {
+                          fontSize: "14px",
+                          fontWeight: isSelected(item.path) ? 600 : 500,
+                          color: "inherit",
+                        },
+                      }}
+                    />
+                  )}
+
+                  {item.children && !collapse && (
+                    <ListItemIcon
+                      sx={{
+                        mr: -1,
+                        color: isSelected(item.path) ? "#fff" : "#9CA3AF",
+                      }}
+                    >
+                      {openChildMenus[item.id] ? (
+                        <ExpandMoreIcon sx={{ fontSize: 20 }} />
+                      ) : (
+                        <ExpandLessIcon sx={{ fontSize: 20 }} />
+                      )}
+                    </ListItemIcon>
+                  )}
+                </ListItemButton>
+              </Tooltip>
             </li>
 
             {/* Child Menu when Hover */}
@@ -205,42 +225,47 @@ const Sidebar = ({
                 className="child-menu"
                 style={{
                   position: "fixed",
-                  left: 80,
+                  left: 88,
                   top: hoveredMenuPosition.top,
                   zIndex: 1500,
-                  backgroundColor: "#fff",
-                  padding: "0",
+                  backgroundColor: "#FFFFFF",
+                  padding: "8px 0",
                   margin: "0",
                   listStyle: "none",
-                  borderRadius: 10,
-                  boxShadow: `0 10px 30px ${boxShadowColor}`,
+                  borderRadius: 12,
+                  boxShadow: "0 10px 32px rgba(0, 0, 0, 0.15)",
+                  minWidth: "180px",
                 }}
-                onMouseEnter={() => setHoveredMenuId(item.id)} // Keep it open when hovered
+                onMouseEnter={() => setHoveredMenuId(item.id)}
                 onMouseLeave={closeMenuWithDelay}
               >
                 {item.children.map((child) => (
                   <li
                     key={child.id}
-                    style={{ width: "14rem", borderRadius: 10 }}
+                    style={{ listStyle: "none", padding: "0 8px" }}
                   >
                     <ListItemButton
                       component={Link}
                       to={child.path || "#"}
                       sx={{
-                        padding: "8px",
-                        height: 50,
-                        color: textColor,
+                        padding: "10px 12px",
+                        height: 44,
+                        color: "#6B7280",
+                        fontSize: "14px",
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
                         "&:hover": {
-                          color: hoverTextColor,
-                          backgroundColor: hoverColor,
+                          color: "#47A065",
+                          backgroundColor: "#F0FDF4",
                         },
                       }}
                     >
                       <ListItemText
                         primary={child.label}
                         sx={{
-                          padding: "8px",
-                          "& .MuiTypography-root": { fontSize: " 14px" },
+                          "& .MuiTypography-root": {
+                            fontSize: "14px",
+                          },
                         }}
                       />
                     </ListItemButton>
@@ -251,26 +276,31 @@ const Sidebar = ({
 
             {/* Child Menu when Expanded */}
             {item.children && openChildMenus[item.id] && !collapse && (
-              <ul style={{ listStyle: "none", marginRight: "7px" }}>
+              <ul style={{ listStyle: "none", margin: "4px 0 12px 0" }}>
                 {item.children.map((child) => (
                   <li key={child.id}>
                     <ListItemButton
                       component={Link}
                       to={child.path || "#"}
                       sx={{
-                        maxHeight: 35,
+                        maxHeight: 40,
                         backgroundColor: isSelected(child.path)
-                          ? hoverColor
+                          ? "#F0FDF4"
                           : "transparent",
-                        color: isSelected(child.path)
-                          ? hoverTextColor
-                          : textColor,
+                        color: isSelected(child.path) ? "#47A065" : "#6B7280",
+                        marginLeft: "12px",
+                        marginRight: "8px",
                         marginTop: "6px",
                         justifyContent: "initial",
                         borderRadius: "8px",
+                        borderLeft: isSelected(child.path)
+                          ? "3px solid #47A065"
+                          : "3px solid transparent",
+                        pl: 1.5,
+                        transition: "all 0.2s ease",
                         "&:hover": {
-                          backgroundColor: hoverColor,
-                          color: hoverTextColor,
+                          backgroundColor: "#F3F4F6",
+                          color: "#47A065",
                         },
                       }}
                     >
@@ -278,9 +308,10 @@ const Sidebar = ({
                         <ListItemIcon
                           sx={{
                             minWidth: 0,
-                            mr: collapse ? 0 : 0.5,
+                            mr: 1,
                             justifyContent: "center",
-                            color: item.label === "Logout" ? "red" : "#475569",
+                            color: "inherit",
+                            fontSize: "18px",
                           }}
                         >
                           <child.icon fontSize="small" />
@@ -289,10 +320,9 @@ const Sidebar = ({
                       <ListItemText
                         primary={child.label}
                         sx={{
-                          paddingLeft: 3,
                           "& .MuiTypography-root": {
                             fontSize: "14px",
-                            color: textOneColor,
+                            color: "inherit",
                           },
                         }}
                       />
@@ -312,21 +342,25 @@ const Sidebar = ({
           mt: "auto",
           display: "flex",
           justifyContent: collapse ? "center" : "flex-end",
+          borderTop: "1px solid #E5E7EB",
         }}
       >
-        <IconButton
-          onClick={handleCollapse}
-          sx={{
-            backgroundColor: "#334155", // gray-700
-            color: "#fff",
-            "&:hover": {
-              backgroundColor: "#1e293b", // gray-800
-            },
-            transition: "all 0.2s ease",
-          }}
-        >
-          {collapse ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-        </IconButton>
+        <Tooltip title={collapse ? "Expand" : "Collapse"} placement="right">
+          <IconButton
+            onClick={handleCollapse}
+            sx={{
+              backgroundColor: "#F3F4F6",
+              color: "#6B7280",
+              "&:hover": {
+                backgroundColor: "#E5E7EB",
+                color: "#47A065",
+              },
+              transition: "all 0.2s ease",
+            }}
+          >
+            {collapse ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </Tooltip>
       </Box>
     </Drawer>
   );
