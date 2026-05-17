@@ -151,6 +151,12 @@ const MDataTable = ({
     if (filters?.customDateRange?.onToDateChange)
       filters.customDateRange.onToDateChange("");
     if (onClearFilters) onClearFilters();
+
+    if (filters?.customNumericFilters) {
+      filters.customNumericFilters.onMinFeeChange("");
+      filters.customNumericFilters.onMaxFeeChange("");
+      filters.customNumericFilters.onMinExperienceChange("");
+    }
   };
 
   const sortedData = useMemo(() => {
@@ -385,6 +391,44 @@ const MDataTable = ({
               />
             </Stack>
           )}
+
+          {filters?.customNumericFilters && (
+            <Stack spacing={1.5}>
+              <Typography fontWeight={600}>Doctor Filters</Typography>
+
+              <TextField
+                type="number"
+                label="Min Fee"
+                size="small"
+                value={filters.customNumericFilters.minFee}
+                onChange={(e) =>
+                  filters.customNumericFilters.onMinFeeChange(e.target.value)
+                }
+              />
+
+              <TextField
+                type="number"
+                label="Max Fee"
+                size="small"
+                value={filters.customNumericFilters.maxFee}
+                onChange={(e) =>
+                  filters.customNumericFilters.onMaxFeeChange(e.target.value)
+                }
+              />
+
+              <TextField
+                type="number"
+                label="Min Experience"
+                size="small"
+                value={filters.customNumericFilters.minExperience}
+                onChange={(e) =>
+                  filters.customNumericFilters.onMinExperienceChange(
+                    e.target.value,
+                  )
+                }
+              />
+            </Stack>
+          )}
         </Stack>
       </Box>
 
@@ -493,6 +537,42 @@ const MDataTable = ({
               ))}
             </Select>
           </FormControl>
+        )}
+
+        {filters?.customNumericFilters && (
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            <TextField
+              size="small"
+              type="number"
+              label="Min Fee"
+              value={filters.customNumericFilters.minFee}
+              onChange={(e) =>
+                filters.customNumericFilters.onMinFeeChange(e.target.value)
+              }
+            />
+
+            <TextField
+              size="small"
+              type="number"
+              label="Max Fee"
+              value={filters.customNumericFilters.maxFee}
+              onChange={(e) =>
+                filters.customNumericFilters.onMaxFeeChange(e.target.value)
+              }
+            />
+
+            <TextField
+              size="small"
+              type="number"
+              label="Min Exp"
+              value={filters.customNumericFilters.minExperience}
+              onChange={(e) =>
+                filters.customNumericFilters.onMinExperienceChange(
+                  e.target.value,
+                )
+              }
+            />
+          </Box>
         )}
 
         {sort && (

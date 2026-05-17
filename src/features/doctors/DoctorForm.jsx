@@ -23,6 +23,7 @@ import MButton from "../../components/Buttons/MBtn";
 import MBackButton from "../../components/Buttons/MBackButton";
 import Header from "../../components/Header.jsx";
 import { getDoctorById, createDoctor, updateDoctor } from "./doctorThunks";
+import { specializationOptions } from "./index.js";
 
 export default function DoctorForm() {
   const dispatch = useDispatch();
@@ -52,20 +53,6 @@ export default function DoctorForm() {
   });
 
   const isActive = watch("is_active");
-
-  // Specialization options
-  const specializationOptions = [
-    { label: "General Practice", value: "general_practice" },
-    { label: "Cardiology", value: "cardiology" },
-    { label: "Dermatology", value: "dermatology" },
-    { label: "Neurology", value: "neurology" },
-    { label: "Orthopedics", value: "orthopedics" },
-    { label: "Pediatrics", value: "pediatrics" },
-    { label: "Psychiatry", value: "psychiatry" },
-    { label: "Ophthalmology", value: "ophthalmology" },
-    { label: "ENT", value: "ent" },
-    { label: "Gastroenterology", value: "gastroenterology" },
-  ];
 
   useEffect(() => {
     if (id) {

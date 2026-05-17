@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import MButton from "../../components/Buttons/MBtn";
 import { getDoctors, deleteDoctor } from "./doctorThunks";
 import { useDebounce } from "../../hooks/useDebounce";
+import { specializationOptions } from ".";
 
 export default function DoctorList() {
   const dispatch = useDispatch();
@@ -31,6 +32,10 @@ export default function DoctorList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
+  const [minFee, setMinFee] = useState("");
+  const [maxFee, setMaxFee] = useState("");
+  const [minExperience, setMinExperience] = useState("");
+
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
     doctor: null,
@@ -46,10 +51,22 @@ export default function DoctorList() {
         page,
         limit: rowsPerPage,
         search: debouncedSearchTerm,
-        status: filterValue || undefined,
+        specialization: filterValue || undefined,
+        minFee: minFee || undefined,
+        maxFee: maxFee || undefined,
+        minExperience: minExperience || undefined,
       }),
     );
-  }, [page, rowsPerPage, debouncedSearchTerm, filterValue, dispatch]);
+  }, [
+    page,
+    rowsPerPage,
+    debouncedSearchTerm,
+    filterValue,
+    minFee,
+    maxFee,
+    minExperience,
+    dispatch,
+  ]);
 
   // Reset to first page when search or filter changes
   useEffect(() => {
@@ -168,15 +185,17 @@ export default function DoctorList() {
   // Filter configuration
   const filterConfig = {
     value: filterValue,
-    onChange: (value) => {
-      setFilterValue(value);
-      setPage(1); // Reset to first page when filtering
+    onChange: setFilterValue,
+    options: specializationOptions,
+
+    customNumericFilters: {
+      minFee,
+      maxFee,
+      minExperience,
+      onMinFeeChange: setMinFee,
+      onMaxFeeChange: setMaxFee,
+      onMinExperienceChange: setMinExperience,
     },
-    options: [
-      // { label: "All Doctors", value: "all" },
-      { label: "Active", value: "active" },
-      { label: "Inactive", value: "inactive" },
-    ],
   };
 
   // Sort configuration
