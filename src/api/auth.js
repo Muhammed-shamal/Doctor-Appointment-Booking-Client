@@ -33,6 +33,7 @@ class AuthService {
     this.isRefreshing = true;
     
     try {
+      console.log('try to refresh reques')
       // Server reads refresh token from HttpOnly cookie
       const response = await axios.post(`${API_URL.BASE_URL}/auth/refresh-token`, {}, {
         withCredentials: true
@@ -40,7 +41,7 @@ class AuthService {
 
       console.log('try to refresh the token',response);
       
-      const { accessToken } = response.data;
+      const { accessToken } = response.data.result;
       this.setAccessToken(accessToken);
       
       this.processQueue(null, accessToken);
@@ -55,6 +56,7 @@ class AuthService {
   }
 
   setAccessToken(token) {
+    console.log('try to settinug token',token)
     this.accessToken = token;
     
     // Optional: Store temporarily for page refresh (5 min window)

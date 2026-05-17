@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Drawer,
   Box,
@@ -18,7 +19,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/vite.svg";
 import Logo2 from "../../assets/vite.svg";
-import { menu } from "./menu";
+import { getMenu } from "./menu";
 
 const Sidebar = ({
   open,
@@ -37,7 +38,8 @@ const Sidebar = ({
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const location = useLocation(); // Get the current location from React Router
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
 
   const [hoveredMenuPosition, setHoveredMenuPosition] = useState({ top: 0 });
 
@@ -73,11 +75,12 @@ const Sidebar = ({
   };
 
   const closeMenuWithDelay = () => {
-  setTimeout(() => {
-    setHoveredMenuId(null);
-  }, 10);
-};
+    setTimeout(() => {
+      setHoveredMenuId(null);
+    }, 10);
+  };
 
+  const menu = getMenu(user.role);
 
   return (
     <Drawer
@@ -133,16 +136,14 @@ const Sidebar = ({
         </Box>
       </Box>
 
-      {/* <Divider sx={{ borderColor: "#e2e8f0" }} /> */}
-
       <List>
-        {menu.map((item) => (
+        {menu.staticMenu.map((item) => (
           <React.Fragment key={item.id}>
             <li
               id={`menu-item-${item.id}`} // Add unique ID
               style={{ padding: 2 }}
               onMouseEnter={() => handleMouseEnter(item.id)}
-            //   onMouseLeave={handleMouseLeave}
+              //   onMouseLeave={handleMouseLeave}
             >
               <ListItemButton
                 component={Link}
@@ -215,7 +216,7 @@ const Sidebar = ({
                   boxShadow: `0 10px 30px ${boxShadowColor}`,
                 }}
                 onMouseEnter={() => setHoveredMenuId(item.id)} // Keep it open when hovered
-                onMouseLeave={closeMenuWithDelay}   
+                onMouseLeave={closeMenuWithDelay}
               >
                 {item.children.map((child) => (
                   <li

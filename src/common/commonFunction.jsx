@@ -89,11 +89,3 @@ export function getLocalValue(key, tranformToObject) {
 export function convertToJson(value) {
   return JSON.parse(value);
 }
-
-let currentAccessToken = null;
-
-export const setAccessTokenForAxios = (token) => {
-  currentAccessToken = token;
-};
-
-export const getAccessTokenForAxios = () => currentAccessToken;

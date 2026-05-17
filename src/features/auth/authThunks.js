@@ -13,7 +13,7 @@ export const registerUser = createAsyncThunk(
         credentials,
       );
       console.log("response from register", response);
-      return response.data;
+      return response.data.result;
     } catch (error) {
       console.error("Register error:", error.response?.data);
       return rejectWithValue(
@@ -31,8 +31,9 @@ export const loginUser = createAsyncThunk(
         `${API_URL.BASE_URL}/auth/login`,
         credentials,
       );
-      authService.setAccessToken(response.data.accessToken);
-      return response.data;
+      console.log('login res',response)
+      authService.setAccessToken(response.data.result.accessToken);
+      return response.data.result;
     } catch (error) {
       console.error("Login error:", error.response?.data);
       return rejectWithValue(
@@ -52,7 +53,7 @@ export const forgotPassword = createAsyncThunk(
       );
 
       console.log("response forgot", response);
-      return response.data;
+      return response.data.result;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to send reset password link",
@@ -67,11 +68,11 @@ export const refreshTokenOnLoad = createAsyncThunk(
     try {
       // Step 1: Refresh token
       const refreshResponse = await axiosInstance.post("/auth/refresh-token");
-      const { accessToken } = refreshResponse.data;
+      const { accessToken } = refreshResponse.data.result;
 
       // Step 2: Immediately fetch user data with new token
       const userResponse = await axiosInstance.get("/auth/me");
-      const userData = userResponse.data.data.user;
+      const userData = userResponse.data.result.user;
 
       // Return both token and user data
       return {
