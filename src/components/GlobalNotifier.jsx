@@ -8,6 +8,7 @@ import {
 } from "../features/doctors/doctorSlice";
 import { clearScheduleError, clearScheduleSuccess } from "../features/schedules/scheduleSlice";
 import { clearDashboardError } from "../features/dashboard/dashboardSlice";
+import { clearAppointmentError, clearAppointmentSuccess } from "../features/appointments/appointmentSlice";
 
 const GlobalNotifier = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,10 @@ const GlobalNotifier = () => {
 
   const { error: scheduleError, success: scheduleSuccess } = useSelector(
     (state) => state.schedule,
+  );
+
+  const { error: appointmentError, success: appointmentSuccess } = useSelector(
+    (state) => state.appointment,
   );
 
   const { error: dashboardError } = useSelector((state) => state.dashboard);
@@ -58,6 +63,16 @@ const GlobalNotifier = () => {
       dispatch(clearScheduleSuccess());
     }
 
+    if (appointmentError) {
+      Toast(appointmentError, "error");
+      dispatch(clearAppointmentError());
+    }
+
+    if (appointmentSuccess) {
+      Toast(appointmentSuccess, "success");
+      dispatch(clearAppointmentSuccess());
+    }
+
     if (dashboardError) {
       Toast(dashboardError, "error");
       dispatch(clearDashboardError());
@@ -69,6 +84,8 @@ const GlobalNotifier = () => {
     doctorSuccess,
     scheduleError,
     scheduleSuccess,
+    appointmentError,
+    appointmentSuccess,
     dashboardError,
     Toast,
     dispatch,

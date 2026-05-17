@@ -5,19 +5,27 @@ import MDataTable from "../../components/DataGrid/MDataTable";
 import Header from "../../components/Header";
 import { DeleteConfirmDialog } from "../../components/Modal/MConfirmDiolog";
 import MButton from "../../components/Buttons/MBtn";
-import { getMyAppointments, updateAppointmentStatus } from "./appointmentThunks";
+import {
+  getMyAppointments,
+  updateAppointmentStatus,
+} from "./appointmentThunks";
+import { useNavigate } from "react-router-dom";
 
 export default function AppointmentList() {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const navigate = useNavigate();
 
-  const appointmentState = useSelector((state) => state.appointment || {});
-  const { appointments = [], loading = false } = appointmentState;
+  const appointmentState = useSelector((state) => state.appointment);
+  const { appointments, loading } = appointmentState;
 
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const [cancelDialog, setCancelDialog] = useState({ open: false, appointment: null });
+  const [cancelDialog, setCancelDialog] = useState({
+    open: false,
+    appointment: null,
+  });
   const [cancelLoading, setCancelLoading] = useState(false);
 
   useEffect(() => {
@@ -31,7 +39,8 @@ export default function AppointmentList() {
       {
         label: "Doctor",
         field: "doctor.fname",
-        render: (row) => `${row.doctor?.fname || ""} ${row.doctor?.lname || ""}`.trim(),
+        render: (row) =>
+          `${row.doctor?.fname || ""} ${row.doctor?.lname || ""}`.trim(),
         sortable: true,
       },
       {
@@ -39,32 +48,45 @@ export default function AppointmentList() {
         field: "appointmentDate",
         sortable: true,
         isDate: true,
-        render: (row) => (row.appointmentDate ? new Date(row.appointmentDate).toLocaleDateString() : ""),
+        render: (row) =>
+          row.appointmentDate
+            ? new Date(row.appointmentDate).toLocaleDateString()
+            : "",
       },
       {
         label: "Time",
         field: "slotStartTime",
-        render: (row) => `${row.slotStartTime || ""}${row.slotEndTime ? ` - ${row.slotEndTime}` : ""}`,
+        render: (row) =>
+          `${row.slotStartTime || ""}${row.slotEndTime ? ` - ${row.slotEndTime}` : ""}`,
       },
       {
         label: "Status",
         field: "status",
+        type: "status",
         sortable: true,
       },
       {
         label: "Booked At",
         field: "createdAt",
-        render: (row) => (row.createdAt ? new Date(row.createdAt).toLocaleString() : ""),
+        render: (row) =>
+          row.createdAt ? new Date(row.createdAt).toLocaleString() : "",
       },
     ],
     [],
   );
 
   const actions = [
+    // {
+    //   label: "View",
+    //   handler: (appointment) => {
+    //     navigate(`/appointment/detail/${appointment._id}`);
+    //   },
+    // },
     {
       label: "Cancel",
       handler: (appointment) => setCancelDialog({ open: true, appointment }),
-      visible: (appt) => appt.status !== "cancelled" && appt.status !== "completed",
+      visible: (appt) =>
+        appt.status !== "cancelled" && appt.status !== "completed",
     },
   ];
 
@@ -73,7 +95,10 @@ export default function AppointmentList() {
     try {
       setCancelLoading(true);
       await dispatch(
-        updateAppointmentStatus({ appointmentId: cancelDialog.appointment._id, status: "cancelled" }),
+        updateAppointmentStatus({
+          appointmentId: cancelDialog.appointment._id,
+          status: "cancelled",
+        }),
       ).unwrap();
       setCancelDialog({ open: false, appointment: null });
     } catch (err) {
@@ -83,7 +108,10 @@ export default function AppointmentList() {
     }
   };
 
-  const totalPages = Math.max(1, Math.ceil((appointments?.length || 0) / rowsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil((appointments?.length || 0) / rowsPerPage),
+  );
 
   return (
     <>

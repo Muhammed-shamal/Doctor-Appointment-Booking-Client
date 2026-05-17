@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Alert,
+  alpha,
   Box,
   Button,
   Card,
@@ -19,6 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { formatDate } from "../../../common/commonFunction";
 
 function AppointmentBooking({
   openBookingModal,
@@ -31,10 +33,12 @@ function AppointmentBooking({
   selectedSlot,
   availableSlots,
   setBookingStep,
+  bookingLoading,
 
   handleCloseModal,
   handleSelectDate,
-  handleConfirmBooking
+  handleConfirmBooking,
+  handleSelectSlot
 }) {
   return (
     <Dialog

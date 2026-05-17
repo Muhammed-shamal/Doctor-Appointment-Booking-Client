@@ -89,3 +89,24 @@ export function getLocalValue(key, tranformToObject) {
 export function convertToJson(value) {
   return JSON.parse(value);
 }
+
+export const formatDate = (date) => {
+  if (!date) return "N/A";
+
+  return new Date(date).toLocaleDateString("en-US", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const formatTime = (date) => {
+  if (!date) return "N/A";
+
+  return new Date(date).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};

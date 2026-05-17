@@ -5,7 +5,10 @@ export const bookAppointment = createAsyncThunk(
   "appointment/bookAppointment",
   async (appointmentData, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post("/appointments/book", appointmentData);
+      const res = await axiosInstance.post(
+        "/appointments/book",
+        appointmentData,
+      );
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -20,6 +23,7 @@ export const getMyAppointments = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get("/appointments/my");
+      console.log("res is my appointments", res);
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -33,11 +37,31 @@ export const updateAppointmentStatus = createAsyncThunk(
   "appointment/updateAppointmentStatus",
   async ({ appointmentId, status }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.put(`/appointments/${appointmentId}/status`, { status });
+      const res = await axiosInstance.put(
+        `/appointments/${appointmentId}/status`,
+        { status },
+      );
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to update appointment status",
+      );
+    }
+  },
+);
+
+export const getAppointmentById = createAsyncThunk(
+  "appointment/getAppointmentById",
+  async (appointmentId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/appointments/${appointmentId}`,
+      );
+      console.log("response appint by id",response)
+      return response.data.result;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve appointment",
       );
     }
   },
