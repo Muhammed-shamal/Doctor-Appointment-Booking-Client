@@ -124,8 +124,7 @@ const Sidebar = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "linear-gradient(135deg, #47A065 0%, #6BC58A 100%)",
-            boxShadow: "0 4px 12px rgba(71, 160, 101, 0.3)",
+            
             transition: "all 0.3s ease",
           }}
         >

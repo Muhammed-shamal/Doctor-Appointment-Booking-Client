@@ -45,10 +45,10 @@ const doctorSlice = createSlice({
       })
       .addCase(getDoctors.fulfilled, (state, action) => {
         state.loading = false;
-        state.doctors = action.payload.doctors;
-        state.totalDoctors = action.payload.total || 0;
-        state.currentPage = action.payload.page || 1;
-        state.limit = action.payload.limit || 10;
+        state.doctors = action.payload.results;
+        state.totalDoctors = action.payload.totalCount || 0;
+        state.currentPage = action.payload.currentPage || 1;
+        state.limit = action.payload.totalPages || 10;
       })
       .addCase(getDoctors.rejected, (state, action) => {
         state.loading = false;

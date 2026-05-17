@@ -36,7 +36,7 @@ class AuthService {
     try {
       console.log('try to refresh reques')
       // Server reads refresh token from HttpOnly cookie
-      const response = refreshInstance.post("/auth/refresh-token");
+      const response = await refreshInstance.post("/auth/refresh-token");
 
       console.log('try to refresh the token',response);
       

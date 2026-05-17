@@ -7,26 +7,37 @@ import { DeleteConfirmDialog } from "../../components/Modal/MConfirmDiolog";
 import Header from "../../components/Header";
 import MButton from "../../components/Buttons/MBtn";
 import { getDoctors, deleteDoctor } from "./doctorThunks";
-import { clearDoctorSuccess, clearDoctorError } from "./doctorSlice";
-import { useToast } from "../../context/SnackBar";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export default function DoctorList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
-  const Toast = useToast();
 
   // Redux state
   const doctorState = useSelector((state) => state.doctor || {});
-  const { doctors = [], loading, error, success, currentPage = 1, limit = 10, totalDoctors = 0 } = doctorState;
+  const {
+    doctors = [],
+    loading,
+    currentPage = 1,
+    limit = 10,
+    totalDoctors = 0,
+  } = doctorState;
 
   // Local state
   const [page, setPage] = useState(currentPage);
   const [rowsPerPage, setRowsPerPage] = useState(limit);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("");
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, doctor: null });
+
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    doctor: null,
+  });
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Fetch doctors when page or rowsPerPage changes
   useEffect(() => {
@@ -34,41 +45,33 @@ export default function DoctorList() {
       getDoctors({
         page,
         limit: rowsPerPage,
-        search: searchTerm,
+        search: debouncedSearchTerm,
         status: filterValue || undefined,
-      })
+      }),
     );
-  }, [page, rowsPerPage, searchTerm, filterValue, dispatch]);
+  }, [page, rowsPerPage, debouncedSearchTerm, filterValue, dispatch]);
 
-  // Clear success/error notifications after 3 seconds
+  // Reset to first page when search or filter changes
   useEffect(() => {
-    if (success) {
-      Toast(success, "success");
-      dispatch(clearDoctorSuccess());
+    if (page !== 1) {
+      setPage(1);
     }
-  }, [success, dispatch, Toast]);
-
-  useEffect(() => {
-    if (error) {
-      Toast(error, "error");
-      dispatch(clearDoctorError());
-    }
-  }, [error, dispatch, Toast]);
+  }, [debouncedSearchTerm, filterValue]);
 
   // Table columns configuration
   const columns = useMemo(
     () => [
       {
         label: "Name",
-        field: "firstName",
+        field: "fname",
         sortable: true,
-        render: (row) => `${row.firstName} ${row.lastName}`,
+        render: (row) => `${row.fname} ${row.lname}`,
       },
-      {
-        label: "Email",
-        field: "email",
-        sortable: true,
-      },
+      // {
+      //   label: "Email",
+      //   field: "email",
+      //   sortable: true,
+      // },
       {
         label: "Phone",
         field: "phone",
@@ -87,7 +90,7 @@ export default function DoctorList() {
       },
       {
         label: "Consultation Fee",
-        field: "consultation_fee",
+        field: "consultationFee",
         sortable: true,
         type: "number",
       },
@@ -98,12 +101,12 @@ export default function DoctorList() {
       },
       {
         label: "Status",
-        field: "is_active",
+        field: "isActive",
         sortable: true,
         type: "boolean",
       },
     ],
-    []
+    [],
   );
 
   // Table actions - Update and Delete
@@ -142,15 +145,20 @@ export default function DoctorList() {
     setPage(newPage);
   };
 
-  // Search configuration
-  const searchConfig = {
-    placeholder: "Search by name, email, or specialization...",
-    onChange: (e) => {
-      setSearchTerm(e.target.value);
-      setPage(1); // Reset to first page when searching
-    },
+  const handleSearchChange = (value) => {
+    // Handle both string value and event object
+    const searchValue =
+      typeof value === "string" ? value : value?.target?.value || "";
+
+    setSearchTerm(searchValue);
+    setPage(1);
   };
 
+  const searchConfig = {
+    placeholder: "Search by name, email, or specialization...",
+    value: searchTerm,
+    onChange: handleSearchChange,
+  };
   // Filter configuration
   const filterConfig = {
     value: filterValue,
@@ -159,7 +167,7 @@ export default function DoctorList() {
       setPage(1); // Reset to first page when filtering
     },
     options: [
-      { label: "All Doctors", value: "" },
+      // { label: "All Doctors", value: "all" },
       { label: "Active", value: "active" },
       { label: "Inactive", value: "inactive" },
     ],
@@ -219,7 +227,7 @@ export default function DoctorList() {
           filters={filterConfig}
           sort={sortConfig}
           title="Doctors List"
-          getLink={(doctor) => `/doctors/${doctor._id}`}
+          // getLink={(doctor) => `/doctors/${doctor._id}`}
           exportToExcel={true}
         />
       </Box>
@@ -230,7 +238,9 @@ export default function DoctorList() {
         onClose={() => setDeleteDialog({ open: false, doctor: null })}
         onConfirm={handleDeleteConfirm}
         title="Delete Doctor"
-        question={`Are you sure you want to delete ${deleteDialog.doctor?.firstName} ${deleteDialog.doctor?.lastName}? This action cannot be undone.`}
+        question={
+          "Are you sure you want to delete data? This action cannot be undone."
+        }
         loading={deleteLoading}
         confirmAsync={true}
       />

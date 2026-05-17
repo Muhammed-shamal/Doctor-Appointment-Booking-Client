@@ -64,14 +64,7 @@ export default function AccountPopover() {
           <Box
             width={60}
             height={40}
-            sx={{
-              height: 55,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              bgcolor: "#A6CE39", // optional light green background
-            }}
+            
           >
             <Box
               component="img"

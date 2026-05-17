@@ -38,8 +38,8 @@ export default function DoctorForm() {
 
   const { handleSubmit, reset, control, watch } = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      fname: "",
+      lname: "",
       email: "",
       phone: "",
       specialization: "",
@@ -48,7 +48,7 @@ export default function DoctorForm() {
       qualifications: "",
       clinic_name: "",
       clinic_address: "",
-      consultation_fee: "",
+      consultationFee: "",
       is_active: true,
     },
   });
@@ -81,8 +81,8 @@ export default function DoctorForm() {
   useEffect(() => {
     if (id && selectedDoctor && selectedDoctor._id === id) {
       reset({
-        firstName: selectedDoctor.firstName || "",
-        lastName: selectedDoctor.lastName || "",
+        fname: selectedDoctor.fname || "",
+        lname: selectedDoctor.lname || "",
         email: selectedDoctor.email || "",
         phone: selectedDoctor.phone || "",
         specialization: selectedDoctor.specialization || "",
@@ -91,7 +91,7 @@ export default function DoctorForm() {
         qualifications: selectedDoctor.qualifications || "",
         clinic_name: selectedDoctor.clinic_name || "",
         clinic_address: selectedDoctor.clinic_address || "",
-        consultation_fee: selectedDoctor.consultation_fee || "",
+        consultationFee: selectedDoctor.consultationFee || "",
         is_active: selectedDoctor.is_active !== false,
       });
     }
@@ -115,7 +115,7 @@ export default function DoctorForm() {
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <MBackButton fallback="/doctors" label="Back to Doctors" />
+        <MBackButton fallback="/doctors/list" label="Back to Doctors" />
         {id && loading && (
           <Typography variant="body2" color="primary" sx={{ ml: 2 }}>
             Loading doctor details...
@@ -123,19 +123,13 @@ export default function DoctorForm() {
         )}
       </Box>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <Header
           title={id ? "Edit Doctor" : "Add New Doctor"}
           subtitle={
             id
-              ? `Editing: ${selectedDoctor?.firstName || ""} ${
-                  selectedDoctor?.lastName || ""
+              ? `Editing: ${selectedDoctor?.fname || ""} ${
+                  selectedDoctor?.lname || ""
                 }`
               : "Add a new doctor to the system"
           }
@@ -206,7 +200,7 @@ export default function DoctorForm() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="First Name"
-                    name="firstName"
+                    name="fname"
                     control={control}
                     rules={{ required: "First name is required" }}
                     sx={{
@@ -220,7 +214,7 @@ export default function DoctorForm() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Last Name"
-                    name="lastName"
+                    name="lname"
                     control={control}
                     rules={{ required: "Last name is required" }}
                     sx={{
@@ -431,7 +425,7 @@ export default function DoctorForm() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Consultation Fee"
-                    name="consultation_fee"
+                    name="consultationFee"
                     type="number"
                     control={control}
                     rules={{
