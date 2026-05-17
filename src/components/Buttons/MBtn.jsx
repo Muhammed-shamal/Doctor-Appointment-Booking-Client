@@ -42,7 +42,7 @@ const MButton = ({
           size={size}
           sx={{
             backgroundColor: bgcolor || theme.palette.primary,
-            color: "#1B4332",
+            color: theme.palette.primary,
             fontWeight: 600,
             "&:hover": {
               backgroundColor: bgcolor || theme.palette.primary.dark,
@@ -63,6 +63,7 @@ const MButton = ({
           type={type === "submit" ? "submit" : "button"}
           disabled={disabled || loading}
           className={className ? className : ""}
+          color={color}
           size={size}
           style={{
             fontSize:

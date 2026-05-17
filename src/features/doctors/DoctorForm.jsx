@@ -13,6 +13,7 @@ import {
   CardContent,
   Divider,
   Alert,
+  InputAdornment,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import MTextField from "../../components/TextBox/MTextField";
@@ -99,7 +100,9 @@ export default function DoctorForm() {
   const onSubmit = async (data) => {
     try {
       if (id) {
-        await dispatch(updateDoctor({ doctorId: id, doctorData: data })).unwrap();
+        await dispatch(
+          updateDoctor({ doctorId: id, doctorData: data }),
+        ).unwrap();
       } else {
         await dispatch(createDoctor(data)).unwrap();
       }
@@ -111,7 +114,7 @@ export default function DoctorForm() {
 
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <MBackButton fallback="/doctors" label="Back to Doctors" />
         {id && loading && (
           <Typography variant="body2" color="primary" sx={{ ml: 2 }}>
@@ -121,7 +124,7 @@ export default function DoctorForm() {
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
@@ -137,64 +140,100 @@ export default function DoctorForm() {
               : "Add a new doctor to the system"
           }
           action={
-            <MButton
-              type="submit"
-              label={id ? "Update Doctor" : "Create Doctor"}
-              loading={loading}
-              sx={{
-                backgroundColor: theme.palette.background.default,
-                color: theme.palette.text.primary,
-                fontWeight: 600,
-                fontSize: "0.79rem",
-                px: 3,
-                py: 1,
-                "&:hover": { backgroundColor: theme.palette.background.paper },
-              }}
-            />
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {/* <MButton
+                label="Cancel"
+                onClick={() => navigate("/doctors")}
+                variant="outlined"
+                color="primary"
+                size="small"
+              /> */}
+
+              <MButton
+                type="submit"
+                label={id ? "Update Doctor" : "Create Doctor"}
+                loading={loading}
+                size="small"
+                variant="contained"
+                sx={{
+                  backgroundColor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                  fontWeight: 600,
+                  fontSize: "0.79rem",
+                  px: 3,
+                  py: 1,
+                  "&:hover": {
+                    backgroundColor: theme.palette.background.paper,
+                  },
+                }}
+              />
+            </Box>
           }
         />
 
         <Stack spacing={3}>
           {/* Basic Information Section */}
           <Card
+            elevation={0}
             sx={{
               border: `1px solid ${theme.palette.divider}`,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+              borderRadius: "16px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+              transition: "box-shadow 0.2s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              },
             }}
           >
-            <CardContent>
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                sx={{ mb: 2 }}
-                color="primary"
-              >
-                Basic Information
-              </Typography>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box
+                  sx={{
+                    width: "4px",
+                    height: "24px",
+                    bgcolor: "primary.main",
+                    borderRadius: "2px",
+                    mr: 1.5,
+                  }}
+                />
+                <Typography variant="h6" fontWeight={700} color="primary.dark">
+                  Basic Information
+                </Typography>
+              </Box>
               <Divider sx={{ mb: 3 }} />
 
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="First Name"
                     name="firstName"
                     control={control}
                     rules={{ required: "First name is required" }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Last Name"
                     name="lastName"
                     control={control}
                     rules={{ required: "Last name is required" }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
-                    label="Email"
+                    label="Email Address"
                     name="email"
                     type="email"
                     control={control}
@@ -205,12 +244,17 @@ export default function DoctorForm() {
                         message: "Invalid email address",
                       },
                     }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
-                    label="Phone"
+                    label="Phone Number"
                     name="phone"
                     type="tel"
                     control={control}
@@ -221,6 +265,11 @@ export default function DoctorForm() {
                         message: "Phone must be at least 10 digits",
                       },
                     }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -229,34 +278,51 @@ export default function DoctorForm() {
 
           {/* Professional Information Section */}
           <Card
+            elevation={0}
             sx={{
               border: `1px solid ${theme.palette.divider}`,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+              borderRadius: "16px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+              transition: "box-shadow 0.2s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              },
             }}
           >
-            <CardContent>
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                sx={{ mb: 2 }}
-                color="primary"
-              >
-                Professional Information
-              </Typography>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box
+                  sx={{
+                    width: "4px",
+                    height: "24px",
+                    bgcolor: "primary.main",
+                    borderRadius: "2px",
+                    mr: 1.5,
+                  }}
+                />
+                <Typography variant="h6" fontWeight={700} color="primary.dark">
+                  Professional Information
+                </Typography>
+              </Box>
               <Divider sx={{ mb: 3 }} />
 
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MSelect
                     label="Specialization"
                     name="specialization"
                     control={control}
                     options={specializationOptions}
                     rules={{ required: "Specialization is required" }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Years of Experience"
                     name="experience"
@@ -269,10 +335,15 @@ export default function DoctorForm() {
                         message: "Experience cannot be negative",
                       },
                     }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Qualifications"
                     name="qualifications"
@@ -282,10 +353,15 @@ export default function DoctorForm() {
                       text: "e.g., MBBS, MD, or other medical degrees",
                       align: "Bottom",
                     }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12}}>
                   <MTextArea
                     label="Bio"
                     name="bio"
@@ -296,6 +372,11 @@ export default function DoctorForm() {
                       text: "Brief biography about the doctor",
                       align: "Bottom",
                     }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -304,33 +385,50 @@ export default function DoctorForm() {
 
           {/* Clinic Information Section */}
           <Card
+            elevation={0}
             sx={{
               border: `1px solid ${theme.palette.divider}`,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+              borderRadius: "16px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+              transition: "box-shadow 0.2s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              },
             }}
           >
-            <CardContent>
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                sx={{ mb: 2 }}
-                color="primary"
-              >
-                Clinic Information
-              </Typography>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box
+                  sx={{
+                    width: "4px",
+                    height: "24px",
+                    bgcolor: "primary.main",
+                    borderRadius: "2px",
+                    mr: 1.5,
+                  }}
+                />
+                <Typography variant="h6" fontWeight={700} color="primary.dark">
+                  Clinic Information
+                </Typography>
+              </Box>
               <Divider sx={{ mb: 3 }} />
 
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Clinic Name"
                     name="clinic_name"
                     control={control}
                     rules={{ required: "Clinic name is required" }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <MTextField
                     label="Consultation Fee"
                     name="consultation_fee"
@@ -343,10 +441,20 @@ export default function DoctorForm() {
                         message: "Fee cannot be negative",
                       },
                     }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12}}>
                   <MTextArea
                     label="Clinic Address"
                     name="clinic_address"
@@ -357,6 +465,11 @@ export default function DoctorForm() {
                       text: "Full address of the clinic",
                       align: "Bottom",
                     }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -365,16 +478,19 @@ export default function DoctorForm() {
 
           {/* Status Section */}
           <Card
+            elevation={0}
             sx={{
-              border: `1px solid ${theme.palette.divider}`,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+              border: `2px solid ${
+                isActive ? theme.palette.success.main : theme.palette.error.main
+              }`,
+              borderRadius: "16px",
               backgroundColor: isActive
-                ? "rgba(71, 160, 101, 0.05)"
-                : "rgba(239, 68, 68, 0.05)",
-              transition: "background-color 0.3s ease",
+                ? "rgba(71, 160, 101, 0.04)"
+                : "rgba(239, 68, 68, 0.04)",
+              transition: "all 0.3s ease",
             }}
           >
-            <CardContent>
+            <CardContent sx={{ p: 3 }}>
               <FormControlLabel
                 control={
                   <Controller
@@ -384,47 +500,94 @@ export default function DoctorForm() {
                       <Switch
                         checked={field.value}
                         onChange={(e) => field.onChange(e.target.checked)}
-                        color="primary"
+                        color="success"
+                        sx={{
+                          "& .MuiSwitch-switchBase.Mui-checked": {
+                            color: theme.palette.success.main,
+                          },
+                          "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                            {
+                              backgroundColor: theme.palette.success.main,
+                            },
+                        }}
                       />
                     )}
                   />
                 }
                 label={
                   <Box>
-                    <Typography variant="subtitle1" fontWeight={600}>
+                    <Typography variant="subtitle1" fontWeight={700}>
                       Doctor Status
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 0.5 }}
+                    >
                       {isActive
-                        ? "✓ Doctor is active and available for bookings"
-                        : "✗ Doctor is inactive and hidden from patients"}
+                        ? "✓ Active - Doctor is visible and available for bookings"
+                        : "✗ Inactive - Doctor is hidden from patients"}
                     </Typography>
                   </Box>
                 }
-                labelPlacement="start"
-                sx={{ width: "100%" }}
+                labelPlacement="end"
+                sx={{
+                  width: "100%",
+                  m: 0,
+                  justifyContent: "space-between",
+                  flexDirection: "row-reverse",
+                }}
               />
             </CardContent>
           </Card>
 
           {/* Action Buttons */}
-          <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 4 }}>
+          {/* <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              justifyContent: "flex-end",
+              mt: 2,
+              pb: 4,
+            }}
+          >
             <MButton
               label="Cancel"
               onClick={() => navigate("/doctors")}
               variant="outlined"
               color="primary"
               sx={{
-                color: theme.palette.primary.main,
-                borderColor: theme.palette.primary.main,
+                px: 4,
+                py: 1.25,
+                borderRadius: "12px",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                borderWidth: "2px",
+                "&:hover": {
+                  borderWidth: "2px",
+                  backgroundColor: "rgba(0,0,0,0.02)",
+                },
               }}
             />
             <MButton
               type="submit"
               label={id ? "Update Doctor" : "Create Doctor"}
               loading={loading}
+              sx={{
+                px: 4,
+                py: 1.25,
+                borderRadius: "12px",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                "&:hover": {
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
+                },
+                transition: "all 0.2s ease",
+              }}
             />
-          </Box>
+          </Box> */}
         </Stack>
       </form>
     </>
