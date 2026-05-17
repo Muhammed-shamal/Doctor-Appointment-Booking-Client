@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import Unauthorized from "./features/Unauthorized";
 import DoctorList from "./features/doctors/DoctorList";
 import DoctorForm from "./features/doctors/DoctorForm";
+import ScheduleList from "./features/schedules/ScheduleList";
+import ScheduleForm from "./features/schedules/ScheduleForm";
 
 function App() {
   const dispatch = useDispatch();
@@ -60,6 +62,11 @@ function App() {
             <Route path="doctors/list" element={<DoctorList />} />
             <Route path="doctors/new" element={<DoctorForm />} />
             <Route path="doctors/:id" element={<DoctorForm />} />
+
+            {/* <Route path="doctors/list" element={<DoctorList />} /> */}
+            <Route path="schedules" element={<ScheduleList />} />
+            <Route path="schedules/new" element={<ScheduleForm />} />
+            {/* <Route path="schedules/:id" element={<ScheduleForm />} /> */}
 
             <Route path="*" element={<NotFound />} />
           </Route>
