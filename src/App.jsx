@@ -8,17 +8,23 @@ import Footer from "./components/Dashboard/Footer";
 import Dashboard from "./features/dashboard/dashboard";
 import NotFound from "./features/NotFound";
 import Register from "./features/auth/registerForm";
-import { getMyRefresh } from "./features/auth/authThunks";
+import { refreshTokenOnLoad } from "./features/auth/authThunks";
 import { useEffect } from "react";
+import Unauthorized from "./features/Unauthorized";
 
 function App() {
-  const { accessToken } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
+  const { accessToken, user, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(getMyRefresh());
-  }, []);
+    // Try to refresh token on app load
+    // This only makes ONE request regardless of how many components
+    dispatch(refreshTokenOnLoad());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading application...</div>;
+  }
 
   return (
     <BrowserRouter>
@@ -30,6 +36,16 @@ function App() {
         <Route
           path="/register"
           element={accessToken ? <Navigate to="/" /> : <Register />}
+        />
+        <Route
+          path="/unauthorized"
+          element={
+            !user || user.role !== "admin" ? (
+              <Unauthorized />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
         />
 
         <Route element={<PrivateRoute token={accessToken} />}>

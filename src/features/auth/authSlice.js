@@ -1,22 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { forgotPassword, getMyRefresh, loginUser, registerUser } from "./authThunks";
+import {
+  forgotPassword,
+  loginUser,
+  refreshTokenOnLoad,
+  registerUser,
+} from "./authThunks";
+import authService from "../../api/auth";
 import { LoacalVariables, setLocalValues } from "../../common/commonFunction";
 
-const userStorage = localStorage.getItem("user");
-
-let userFromStorage = null;
-
-if (userStorage && userStorage !== "undefined" && userStorage !== "null") {
-  try {
-    userFromStorage = JSON.parse(userStorage);
-  } catch (error) {
-    console.error("Invalid user data:", error);
-    localStorage.removeItem("user");
-  }
-}
-
 const initialState = {
-  user: userFromStorage,
+  user: null,
   accessToken: null,
 
   loading: false,
@@ -28,17 +21,14 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // SET NEW ACCESS TOKEN
-    setAccessToken: (state, action) => {
-      state.accessToken = action.payload;
-    },
-
     // LOGOUT
     logout: (state) => {
       state.user = null;
       state.accessToken = null;
 
+      authService.clearAuth();
       localStorage.clear();
+      sessionStorage.clear();
     },
 
     clearAuthError: (state) => {
@@ -53,7 +43,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // REGISTER
+      //register
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -72,7 +62,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // LOGIN
+      //login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -92,8 +82,6 @@ const authSlice = createSlice({
 
         state.user = user;
         state.accessToken = accessToken;
-
-        localStorage.setItem("user", JSON.stringify(user));
 
         setLocalValues(LoacalVariables.UserId, user.id || "");
 
@@ -115,7 +103,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FORGOT PASSWORD
+      // forgot password
       .addCase(forgotPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -132,18 +120,49 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      .addCase(getMyRefresh.pending, (state, action) => {
+      // refresh token
+      .addCase(refreshTokenOnLoad.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getMyRefresh.fulfilled, (state, action) => {
+      .addCase(refreshTokenOnLoad.fulfilled, (state, action) => {
+        if (action.payload) {
+          const payload = action.payload.data;
+
+          state.loading = false;
+
+          const user = payload.user;
+
+          // access token
+          const accessToken = payload.accessToken;
+
+          const message = action.payload.message;
+
+          state.user = user;
+          state.accessToken = accessToken;
+
+          setLocalValues(LoacalVariables.UserId, user.id || "");
+
+          setLocalValues(LoacalVariables.UserType, user.role || "patient");
+
+          setLocalValues(LoacalVariables.Name, user.username || "");
+
+          setLocalValues(LoacalVariables.Email, user.email || "");
+
+          setLocalValues(LoacalVariables.Phone, user.phone || "");
+
+          setLocalValues(LoacalVariables.Address, "");
+        }
         state.loading = false;
-        state.accessToken = action.payload.data.accessToken;
-        state.user = action.payload.data.user;
       })
-      .addCase(getMyRefresh.rejected, (state, action) => {
+      .addCase(refreshTokenOnLoad.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.user = null;
+        state.accessToken = null;
+        // Don't set error for session expiration, it's not an error
+        if (action.payload !== null) {
+          state.error = action.payload;
+        }
       });
   },
 });

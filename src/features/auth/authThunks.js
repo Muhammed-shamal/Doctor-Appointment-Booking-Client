@@ -59,32 +59,36 @@ export const forgotPassword = createAsyncThunk(
   },
 );
 
-export const getMyRefresh = createAsyncThunk(
-  "auth/refresh",
-  async (_, { rejectWithValue }) => {
+export const refreshTokenOnLoad = createAsyncThunk(
+  "auth/refreshOnLoad",
+  async (_, { rejectWithValue, dispatch }) => {
     try {
-      const res = await axiosInstance.post("/auth/refresh");
-
-      return res.data;
-    } catch (err) {
-      return rejectWithValue("Session expired");
-    }
-  },
-);
-
-export const getMe = createAsyncThunk(
-  "auth/me",
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get("/auth/me");
-      console.log("get me response", response);
-      return response;
+      // Step 1: Refresh token
+      const refreshResponse = await axiosInstance.post("/auth/refresh-token");
+      const { accessToken } = refreshResponse.data;
+      
+      // Step 2: Immediately fetch user data with new token
+      const userResponse = await axiosInstance.get("/auth/me");
+      const userData = userResponse.data.data.user;
+      
+      // Return both token and user data
+      return {
+        accessToken,
+        user: userData
+      };
     } catch (error) {
+      // Differentiate between network error vs auth error
+      if (error.response?.status === 401) {
+        // Session expired - normal flow, not a real error
+        return rejectWithValue(null);
+      }
+      
+      // Network error or server error
       return rejectWithValue(
-        error.response?.data?.message || "failed to fetch profile!",
+        error.response?.data?.message || "Failed to initialize application"
       );
     }
-  },
+  }
 );
 
 export const logoutUser = createAsyncThunk(
