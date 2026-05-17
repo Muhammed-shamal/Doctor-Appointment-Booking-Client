@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -18,18 +18,20 @@ import MButton from "../../components/Buttons/MBtn";
 import MBackButton from "../../components/Buttons/MBackButton";
 import Header from "../../components/Header.jsx";
 import { getDoctors } from "../doctors/doctorThunks";
-import { createSchedule } from "./scheduleThunks";
+import { createSchedule, getScheduleById } from "./scheduleThunks";
 
 export default function ScheduleForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { id } = useParams();
 
   const doctorState = useSelector((state) => state.doctor || {});
   const doctors = doctorState.doctors || [];
   const loadingDoctors = doctorState.loading || false;
 
   const scheduleState = useSelector((state) => state.schedule || {});
+  const selectedSchedule = scheduleState.selectedSchedule;
   const loading = scheduleState.loading || false;
   const error = scheduleState.error;
   const success = scheduleState.success;
@@ -45,10 +47,31 @@ export default function ScheduleForm() {
   });
 
   useEffect(() => {
+    if (id) {
+      dispatch(getScheduleById(id));
+    } else {
+      reset();
+    }
+  }, [id, dispatch, reset]);
+
+  useEffect(() => {
     if (!doctors || doctors.length === 0) {
       dispatch(getDoctors());
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (id && selectedSchedule && selectedSchedule._id === id) {
+      console.log('selectedSchedule is',selectedSchedule)
+      reset({
+        doctor: selectedSchedule.doctor,
+        date: selectedSchedule.date,
+        endTime: selectedSchedule.endTime,
+        slotDuration: selectedSchedule.slotDuration,
+        startTime: selectedSchedule.startTime,
+      });
+    }
+  }, [selectedSchedule, id, reset]);
 
   const onSubmit = async (data) => {
     try {

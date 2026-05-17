@@ -64,7 +64,7 @@ function App() {
             <Route path="doctors/:id" element={<DoctorForm />} />
 
             {/* <Route path="doctors/list" element={<DoctorList />} /> */}
-            <Route path="schedules" element={<ScheduleList />} />
+            <Route path="schedules/list" element={<ScheduleList />} />
             <Route path="schedules/new" element={<ScheduleForm />} />
             {/* <Route path="schedules/:id" element={<ScheduleForm />} /> */}
 

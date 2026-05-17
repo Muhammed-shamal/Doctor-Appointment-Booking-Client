@@ -1,4 +1,4 @@
-import { Home, LocalHospital } from "@mui/icons-material";
+import { Home, LocalHospital, Timeline } from "@mui/icons-material";
 
 export const getMenu = (userType) => {
   return {
@@ -17,6 +17,12 @@ export const getMenu = (userType) => {
               label: "Doctors",
               icon: LocalHospital,
               path: "/doctors/list",
+            },
+            {
+              id: 1,
+              label: "Schedules",
+              icon: Timeline,
+              path: "/schedules/list",
             },
           ]
         : [

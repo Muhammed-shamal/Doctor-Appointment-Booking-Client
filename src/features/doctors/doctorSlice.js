@@ -13,7 +13,7 @@ const initialState = {
   totalDoctors: 0,
   currentPage: 1,
   limit: 10,
-  
+
   loading: false,
   error: null,
   success: null,
@@ -77,7 +77,7 @@ const doctorSlice = createSlice({
       .addCase(createDoctor.fulfilled, (state, action) => {
         state.loading = false;
         state.doctors.push(action.payload.doctor);
-        state.success = "Doctor created successfully";
+        state.success = action.payload.message || "Doctor created successfully";
       })
       .addCase(createDoctor.rejected, (state, action) => {
         state.loading = false;
@@ -92,14 +92,16 @@ const doctorSlice = createSlice({
       .addCase(updateDoctor.fulfilled, (state, action) => {
         state.loading = false;
         const updatedDoctor = action.payload.doctor;
-        const index = state.doctors.findIndex((d) => d._id === updatedDoctor._id);
+        const index = state.doctors.findIndex(
+          (d) => d._id === updatedDoctor._id,
+        );
         if (index !== -1) {
           state.doctors[index] = updatedDoctor;
         }
         if (state.selectedDoctor?._id === updatedDoctor._id) {
           state.selectedDoctor = updatedDoctor;
         }
-        state.success = "Doctor updated successfully";
+        state.success = action.payload.message || "Doctor updated successfully";
       })
       .addCase(updateDoctor.rejected, (state, action) => {
         state.loading = false;
@@ -113,12 +115,13 @@ const doctorSlice = createSlice({
       })
       .addCase(deleteDoctor.fulfilled, (state, action) => {
         state.loading = false;
-        const deletedDoctorId = action.meta.arg;
-        state.doctors = state.doctors.filter((d) => d._id !== deletedDoctorId);
-        if (state.selectedDoctor?._id === deletedDoctorId) {
+        const id = action.payload.id;
+
+        state.doctors = state.doctors.filter((d) => d._id !== id);
+        if (state.selectedDoctor?._id === id) {
           state.selectedDoctor = null;
         }
-        state.success = "Doctor deleted successfully";
+        state.success = action.payload.message || "Doctor deleted successfully";
       })
       .addCase(deleteDoctor.rejected, (state, action) => {
         state.loading = false;
