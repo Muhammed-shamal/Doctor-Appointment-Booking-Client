@@ -15,6 +15,8 @@ import DoctorList from "./features/doctors/DoctorList";
 import DoctorForm from "./features/doctors/DoctorForm";
 import ScheduleList from "./features/schedules/ScheduleList";
 import ScheduleForm from "./features/schedules/ScheduleForm";
+import AppointmentList from "./features/appointments/AppointmentList";
+import ResetPassword from "./features/auth/resetPassword";
 
 function App() {
   const dispatch = useDispatch();
@@ -23,7 +25,7 @@ function App() {
   useEffect(() => {
     // Try to refresh token on app load
     // This only makes ONE request regardless of how many components
-    console.log('try to refresh in app.jsx')
+    console.log("try to refresh in app.jsx");
     dispatch(refreshTokenOnLoad());
   }, [dispatch]);
 
@@ -42,6 +44,8 @@ function App() {
           path="/register"
           element={accessToken ? <Navigate to="/" /> : <Register />}
         />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         <Route
           path="/unauthorized"
           element={
@@ -57,7 +61,7 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
-            
+
             {/* Doctor Routes */}
             <Route path="doctors/list" element={<DoctorList />} />
             <Route path="doctors/new" element={<DoctorForm />} />
@@ -67,6 +71,10 @@ function App() {
             <Route path="schedules/list" element={<ScheduleList />} />
             <Route path="schedules/new" element={<ScheduleForm />} />
             <Route path="schedules/:id" element={<ScheduleForm />} />
+
+            <Route path="appointments/list" element={<AppointmentList />} />
+            {/* <Route path="schedules/new" element={<ScheduleForm />} /> */}
+            {/* <Route path="schedules/:id" element={<ScheduleForm />} /> */}
 
             <Route path="*" element={<NotFound />} />
           </Route>

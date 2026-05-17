@@ -5,7 +5,7 @@ export const bookAppointment = createAsyncThunk(
   "appointment/bookAppointment",
   async (appointmentData, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post("/appointments", appointmentData);
+      const res = await axiosInstance.post("/appointments/book", appointmentData);
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -19,7 +19,7 @@ export const getMyAppointments = createAsyncThunk(
   "appointment/getMyAppointments",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("/appointments");
+      const res = await axiosInstance.get("/appointments/my");
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -33,7 +33,7 @@ export const updateAppointmentStatus = createAsyncThunk(
   "appointment/updateAppointmentStatus",
   async ({ appointmentId, status }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.put(`/appointments/${appointmentId}`, { status });
+      const res = await axiosInstance.put(`/appointments/${appointmentId}/status`, { status });
       return res.data.result;
     } catch (error) {
       return rejectWithValue(

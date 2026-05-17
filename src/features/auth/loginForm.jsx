@@ -67,26 +67,10 @@ const Login = () => {
   const handleForgotPasswordSubmit = async (email) => {
     console.log("Password reset requested for:", email);
     try {
-      const response = await forgotPassword(email);
-
-      console.log("Forgot password response:", response);
-
-      if (response) {
-        showMessage(
-          response?.message,
-          response.success === true ? "success" : "error",
-        );
-
-        if (response.success === true) {
-          navigate("/");
-        }
-      }
+      const response = await dispatch(forgotPassword(email)).unwrap();
+      navigate("/login");
     } catch (error) {
       console.error("Failed to reset password:", error);
-      showMessage(
-        error.response?.data?.message || "Failed to reset password",
-        "error",
-      );
     } finally {
       handleForgotPasswordClose();
     }

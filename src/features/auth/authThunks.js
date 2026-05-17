@@ -9,11 +9,11 @@ export const registerUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_URL.BASE_URL}/auth/developer/register/QwertyuioP`,
+        `${API_URL.BASE_URL}/auth/register`,
         credentials,
       );
       console.log("response from register", response);
-      return response.data.result;
+      return response.data;
     } catch (error) {
       console.error("Register error:", error.response?.data);
       return rejectWithValue(
@@ -57,6 +57,27 @@ export const forgotPassword = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to send reset password link",
+      );
+    }
+  },
+);
+
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async (password, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL.BASE_URL}/auth/reset-password/${token}`,
+        {
+          password,
+        },
+      );
+
+      console.log("response reset pas", response);
+      return response.data.result;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to reset password",
       );
     }
   },

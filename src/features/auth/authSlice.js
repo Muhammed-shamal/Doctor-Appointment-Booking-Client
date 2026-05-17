@@ -4,6 +4,7 @@ import {
   loginUser,
   refreshTokenOnLoad,
   registerUser,
+  resetPassword,
 } from "./authThunks";
 import authService from "../../api/auth";
 import { LoacalVariables, setLocalValues } from "../../common/commonFunction";
@@ -50,7 +51,7 @@ const authSlice = createSlice({
       })
 
       .addCase(registerUser.fulfilled, (state, action) => {
-        const payload = action.payload;
+        // const payload = action.payload;
         const message = action.payload.message;
 
         state.loading = false;
@@ -115,6 +116,22 @@ const authSlice = createSlice({
       })
 
       .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // reset password
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message || "Password reset successful! Please login with your new password";
+      })
+
+      .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
