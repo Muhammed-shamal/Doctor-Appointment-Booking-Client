@@ -1,18 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
 
+// GET Dashboard Summary -> /api/dashboard/summary
 export const fetchDashboardData = createAsyncThunk(
-  "dashboard/summary",
+  "dashboard/fetchDashboardData",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("/dashboard/summary");
-      console.log(" Dashboard summary response", res.data);
-      return res.data;
+      const res = await axiosInstance.get("/api/dashboard/summary");
+      console.log("🖥️ Dashboard summary response", res.data);
+      return res.data.data; // Return only the data object (kpis + tables)
     } catch (error) {
-      console.error("Fetch dashboard error:", error.response?.data);
-      return rejectWithValue(
-        error.response?.data?.message || "Dashboard fetch failed!",
-      );
+      console.error("❌ Fetch dashboard error:", error.response?.data);
+      return rejectWithValue(error.response?.data?.message || "Dashboard fetch failed!");
     }
-  },
+  }
 );

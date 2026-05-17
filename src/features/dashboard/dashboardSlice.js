@@ -4,16 +4,23 @@ import { fetchDashboardData } from './dashboardThunk';
 const initialState = {
   loading: false,
   error: null,
+  role: null,
   kpis: {
-    totalEnquiries: 0,
-    totalBlogs: 0,
-    totalClients: 0,
-    totalTestimonials: 0,
+    // Patient KPIs
+    totalAppointments: 0,
+    completedAppointments: 0,
+    cancelledAppointments: 0,
+    upcomingAppointments: 0,
+    // Admin KPIs
+    totalDoctors: 0,
+    totalPatients: 0,
+    todayAppointments: 0,
   },
-  tables: {
-    recentEnquiries: [],
-    recentWorks: [],
-    recentBlogs: { count: 0, data: [] },
+  data: {
+    recentAppointments: [],
+    nextAppointment: null,
+    topDoctors: [],
+    appointmentTrends: [],
   }
 };
 
@@ -21,11 +28,9 @@ const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState,
   reducers: {
-    // ✅ FIXED: Export the name GlobalNotifier expects
     clearDashboardError: (state) => {
       state.error = null;
     },
-    // Keep old name as alias for backward compatibility
     clearError: (state) => {
       state.error = null;
     },
@@ -39,8 +44,13 @@ const dashboardSlice = createSlice({
       .addCase(fetchDashboardData.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.kpis = action.payload.kpis;
-        state.tables = action.payload.tables;
+        state.kpis = action.payload.kpis || {};
+        state.data = {
+          recentAppointments: action.payload.recentAppointments || [],
+          nextAppointment: action.payload.nextAppointment || null,
+          topDoctors: action.payload.topDoctors || [],
+          appointmentTrends: action.payload.appointmentTrends || [],
+        };
       })
       .addCase(fetchDashboardData.rejected, (state, action) => {
         state.loading = false;
