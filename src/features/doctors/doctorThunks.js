@@ -26,6 +26,7 @@ export const getDoctorById = createAsyncThunk(
       const response = await axiosInstance.get(
         `doctors/${doctorId}`
       );
+      console.log('get by id',response.data);
       return response.data.result;
     } catch (error) {
       return rejectWithValue(

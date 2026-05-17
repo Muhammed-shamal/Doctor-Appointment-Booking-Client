@@ -18,6 +18,7 @@ import ScheduleForm from "./features/schedules/ScheduleForm";
 import AppointmentList from "./features/appointments/AppointmentList";
 import ResetPassword from "./features/auth/resetPassword";
 import DoctorDetail from "./features/doctors/DoctorDetail";
+import MLoadingOverlay from "./components/Loader/MLoader";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ function App() {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading application...</div>;
+    return <MLoadingOverlay loading={loading}/>;
   }
 
   return (
@@ -67,7 +68,7 @@ function App() {
             <Route path="doctors/list" element={<DoctorList />} />
             <Route path="doctors/new" element={<DoctorForm />} />
             <Route path="doctors/:id" element={<DoctorForm />} />
-            <Route path="doctor/detail:id" element={<DoctorDetail />} />
+            <Route path="doctor/detail/:id" element={<DoctorDetail />} />
 
             {/* <Route path="doctors/list" element={<DoctorList />} /> */}
             <Route path="schedules/list" element={<ScheduleList />} />

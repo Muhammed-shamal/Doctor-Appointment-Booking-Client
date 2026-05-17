@@ -1,4 +1,9 @@
-import { BookOnlineOutlined, Home, LocalHospital, Timeline } from "@mui/icons-material";
+import {
+  BookOnlineOutlined,
+  Home,
+  LocalHospital,
+  Timeline,
+} from "@mui/icons-material";
 
 export const getMenu = (userType) => {
   return {
@@ -18,6 +23,7 @@ export const getMenu = (userType) => {
               icon: LocalHospital,
               path: "/doctors/list",
             },
+
             {
               id: 3,
               label: "Schedules",
@@ -25,13 +31,12 @@ export const getMenu = (userType) => {
               path: "/schedules/list",
             },
 
-            {
-              id: 4,
-              label: "Appointments",
-              icon: BookOnlineOutlined,
-              path: "/appointments/list",
-            },
-
+            // {
+            //   id: 4,
+            //   label: "Appointments",
+            //   icon: BookOnlineOutlined,
+            //   path: "/appointments/list",
+            // },
           ]
         : [
             {
@@ -42,7 +47,14 @@ export const getMenu = (userType) => {
             },
 
             {
-              id: 4,
+              id: 2,
+              label: "Doctors",
+              icon: LocalHospital,
+              path: "/doctors/list",
+            },
+
+            {
+              id: 3,
               label: "My Appointments",
               icon: BookOnlineOutlined,
               path: "/appointments/list",

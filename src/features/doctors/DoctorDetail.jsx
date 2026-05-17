@@ -37,19 +37,20 @@ import {
 } from "@mui/icons-material";
 import { getDoctorById } from "./doctorThunks";
 
+import MBackButton from "../../components/Buttons/MBackButton";
+import MButton from "../../components/Buttons/MBtn";
+
 const DoctorDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const {
-    selectedDoctor: doctor,
-    loading,
-    error,
-  } = useSelector((state) => state.doctors);
+  const doctorState = useSelector((state) => state.doctor);
+  const doctor = doctorState.selectedDoctor;
+  const loading = doctorState.loading;
 
-  const [imageError, setImageError] = useState(false);
+  // const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -119,11 +120,7 @@ const DoctorDetail = () => {
             {/* Header Section */}
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
               <Avatar
-                src={
-                  !imageError && doctor.profileImage
-                    ? doctor.profileImage
-                    : undefined
-                }
+                src={undefined}
                 onError={() => setImageError(true)}
                 sx={{
                   width: 100,
@@ -244,6 +241,7 @@ const DoctorDetail = () => {
               elevation={0}
               sx={{
                 p: 4,
+                mt:2,
                 borderRadius: 4,
                 border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
                 background: alpha(theme.palette.background.paper, 0.8),
@@ -289,112 +287,74 @@ const DoctorDetail = () => {
           {/* Sidebar - Contact & Booking */}
           <Grid item xs={12} lg={4}>
             <Paper
-              elevation={0}
+              elevation={1}
               sx={{
                 p: 3,
-                borderRadius: 4,
-                border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                background: alpha(theme.palette.background.paper, 0.8),
-                backdropFilter: "blur(10px)",
+                borderRadius: 3,
                 position: "sticky",
                 top: 20,
               }}
             >
-              <Typography variant="h6" fontWeight="600" gutterBottom>
+              <Typography variant="h6" fontWeight={600} mb={3}>
                 Consultation Info
               </Typography>
 
-              <Card
-                elevation={0}
+              {/* Fee */}
+              <Box
                 sx={{
-                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-                  borderRadius: 3,
-                  mb: 3,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: "primary.main",
                   color: "white",
+                  mb: 3,
+                  textAlign: "center",
                 }}
               >
-                <CardContent>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                    <MoneyIcon sx={{ mr: 1 }} />
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Consultation Fee
-                    </Typography>
-                  </Box>
-                  <Typography variant="h4" fontWeight="700">
-                    ₹{doctor.consultationFee}
-                  </Typography>
-                </CardContent>
-              </Card>
+                <Typography variant="body2">Consultation Fee</Typography>
 
-              <Divider sx={{ my: 2 }} />
+                <Typography variant="h4" fontWeight={700}>
+                  ₹{doctor.consultationFee}
+                </Typography>
+              </Box>
 
-              <Typography variant="subtitle1" fontWeight="600" gutterBottom>
-                Contact Information
+              {/* Contact */}
+              <Typography variant="subtitle2" fontWeight={600} mb={2}>
+                Contact
               </Typography>
 
               {doctor.phone && (
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                  <PhoneIcon color="primary" sx={{ mr: 2, fontSize: 20 }} />
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Phone
-                    </Typography>
-                    <Typography variant="body2" fontWeight="500">
-                      {doctor.phone}
-                    </Typography>
-                  </Box>
+                  <PhoneIcon color="primary" sx={{ mr: 1.5, fontSize: 20 }} />
+
+                  <Typography variant="body2">{doctor.phone}</Typography>
                 </Box>
               )}
 
               {doctor.email && (
                 <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                  <EmailIcon color="primary" sx={{ mr: 2, fontSize: 20 }} />
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Email
-                    </Typography>
-                    <Typography variant="body2" fontWeight="500">
-                      {doctor.email}
-                    </Typography>
-                  </Box>
+                  <EmailIcon color="primary" sx={{ mr: 1.5, fontSize: 20 }} />
+
+                  <Typography variant="body2">{doctor.email}</Typography>
                 </Box>
               )}
 
-              <Button
-                fullWidth
-                variant="contained"
-                size="large"
-                onClick={handleBookAppointment}
-                sx={{
-                  mt: 2,
-                  py: 1.5,
-                  borderRadius: 2,
-                  textTransform: "none",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: theme.shadows[8],
-                  },
-                }}
-              >
-                Book Appointment
-              </Button>
+              {/* Buttons */}
+              <Stack spacing={2}>
+                <MButton
+                  fullWidth
+                  variant="contained"
+                  size="small"
+                  onClick={handleBookAppointment}
+                  label="Book Appointment"
+                />
 
-              <Button
-                fullWidth
-                variant="outlined"
-                size="large"
-                sx={{
-                  mt: 2,
-                  py: 1.5,
-                  borderRadius: 2,
-                  textTransform: "none",
-                }}
-              >
-                View Timings
-              </Button>
+                <MButton
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  label="View Timings"
+                />
+              </Stack>
             </Paper>
           </Grid>
         </Grid>
