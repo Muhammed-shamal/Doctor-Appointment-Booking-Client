@@ -21,7 +21,7 @@ const Footer = () => {
           align="center"
           sx={{ color: '#666', fontSize: '0.875rem' }}
         >
-          © {currentYear} Curious Cat.
+          © {currentYear} Doctor Apointment Booking System.
         </Typography>
       </Container>
     </Box>

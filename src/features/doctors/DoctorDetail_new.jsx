@@ -46,14 +46,10 @@ import {
 } from "@mui/icons-material";
 import { getDoctorById } from "./doctorThunks";
 import { getDoctorSchedules } from "../schedules/scheduleThunks";
-import {
-  clearAppointmentError,
-  clearAppointmentSuccess,
-} from "../appointments/appointmentSlice";
+import { bookAppointment, clearAppointmentError, clearAppointmentSuccess } from "../appointments/appointmentSlice";
 
 import MBackButton from "../../components/Buttons/MBackButton";
 import MButton from "../../components/Buttons/MBtn";
-import { bookAppointment } from "../appointments/appointmentThunks";
 
 const DoctorDetail = () => {
   const { id } = useParams();
@@ -228,7 +224,6 @@ const DoctorDetail = () => {
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
               <Avatar
                 src={undefined}
-                onError={() => setImageError(true)}
                 sx={{
                   width: 100,
                   height: 100,
@@ -468,6 +463,7 @@ const DoctorDetail = () => {
             </Paper>
           </Grid>
         </Grid>
+
         {/* Booking Modal */}
         <Dialog
           open={openBookingModal}
@@ -558,7 +554,10 @@ const DoctorDetail = () => {
                             {formatDate(schedule.date)}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {schedule.slots?.filter((s) => !s.isBooked).length}{" "}
+                            {
+                              schedule.slots?.filter((s) => !s.isBooked)
+                                .length
+                            }{" "}
                             slots available
                           </Typography>
                         </Box>
@@ -600,9 +599,7 @@ const DoctorDetail = () => {
                 </Typography>
 
                 {availableSlots.length === 0 ? (
-                  <Alert severity="info">
-                    No available slots for this date.
-                  </Alert>
+                  <Alert severity="info">No available slots for this date.</Alert>
                 ) : (
                   <Grid container spacing={1}>
                     {availableSlots.map((slot) => (
@@ -628,10 +625,7 @@ const DoctorDetail = () => {
                             <Typography variant="body2" fontWeight="600">
                               {slot.startTime}
                             </Typography>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
+                            <Typography variant="caption" color="text.secondary">
                               {slot.endTime}
                             </Typography>
                           </Box>
