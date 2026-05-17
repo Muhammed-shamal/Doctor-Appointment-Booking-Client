@@ -66,7 +66,7 @@ function App() {
             {/* <Route path="doctors/list" element={<DoctorList />} /> */}
             <Route path="schedules/list" element={<ScheduleList />} />
             <Route path="schedules/new" element={<ScheduleForm />} />
-            {/* <Route path="schedules/:id" element={<ScheduleForm />} /> */}
+            <Route path="schedules/:id" element={<ScheduleForm />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

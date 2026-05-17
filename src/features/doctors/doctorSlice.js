@@ -62,7 +62,7 @@ const doctorSlice = createSlice({
       })
       .addCase(getDoctorById.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedDoctor = action.payload.doctor;
+        state.selectedDoctor = action.payload;
       })
       .addCase(getDoctorById.rejected, (state, action) => {
         state.loading = false;
@@ -76,7 +76,7 @@ const doctorSlice = createSlice({
       })
       .addCase(createDoctor.fulfilled, (state, action) => {
         state.loading = false;
-        state.doctors.push(action.payload.doctor);
+        state.doctors.push(action.payload);
         state.success = action.payload.message || "Doctor created successfully";
       })
       .addCase(createDoctor.rejected, (state, action) => {
@@ -91,7 +91,7 @@ const doctorSlice = createSlice({
       })
       .addCase(updateDoctor.fulfilled, (state, action) => {
         state.loading = false;
-        const updatedDoctor = action.payload.doctor;
+        const updatedDoctor = action.payload;
         const index = state.doctors.findIndex(
           (d) => d._id === updatedDoctor._id,
         );

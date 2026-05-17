@@ -18,7 +18,11 @@ import MButton from "../../components/Buttons/MBtn";
 import MBackButton from "../../components/Buttons/MBackButton";
 import Header from "../../components/Header.jsx";
 import { getDoctors } from "../doctors/doctorThunks";
-import { createSchedule, getScheduleById } from "./scheduleThunks";
+import {
+  createSchedule,
+  getScheduleById,
+  updateSchedule,
+} from "./scheduleThunks";
 
 export default function ScheduleForm() {
   const dispatch = useDispatch();
@@ -26,15 +30,13 @@ export default function ScheduleForm() {
   const theme = useTheme();
   const { id } = useParams();
 
-  const doctorState = useSelector((state) => state.doctor || {});
-  const doctors = doctorState.doctors || [];
-  const loadingDoctors = doctorState.loading || false;
+  const doctorState = useSelector((state) => state.doctor);
+  const doctors = doctorState.doctors;
+  const loadingDoctors = doctorState.loading;
 
-  const scheduleState = useSelector((state) => state.schedule || {});
+  const scheduleState = useSelector((state) => state.schedule);
   const selectedSchedule = scheduleState.selectedSchedule;
-  const loading = scheduleState.loading || false;
-  const error = scheduleState.error;
-  const success = scheduleState.success;
+  const loading = scheduleState.loading;
 
   const { handleSubmit, reset, control, watch } = useForm({
     defaultValues: {
@@ -62,10 +64,10 @@ export default function ScheduleForm() {
 
   useEffect(() => {
     if (id && selectedSchedule && selectedSchedule._id === id) {
-      console.log('selectedSchedule is',selectedSchedule)
+      console.log("selectedSchedule is", selectedSchedule);
       reset({
         doctor: selectedSchedule.doctor,
-        date: selectedSchedule.date,
+        date: selectedSchedule.date?.split("T")[0],
         endTime: selectedSchedule.endTime,
         slotDuration: selectedSchedule.slotDuration,
         startTime: selectedSchedule.startTime,
@@ -75,10 +77,17 @@ export default function ScheduleForm() {
 
   const onSubmit = async (data) => {
     try {
-      await dispatch(createSchedule(data)).unwrap();
-      navigate("/schedules");
+      console.log('try to save da',data);
+      if (id) {
+        await dispatch(
+          updateSchedule({ scheduleId: id, scheduleData: data }),
+        ).unwrap();
+      } else {
+        await dispatch(createSchedule(data)).unwrap();
+      }
+      navigate("/schedules/list");
     } catch (err) {
-      console.error("Failed to create schedule", err);
+      console.error("Failed to save schedule", err);
     }
   };
 
@@ -95,13 +104,13 @@ export default function ScheduleForm() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Header
-          title="Create Schedule"
+          title={id ? "Update Schedule" : "Create Schedule"}
           subtitle="Define available slots for a doctor on a specific date"
           action={
             <Box sx={{ display: "flex", gap: 1 }}>
               <MButton
                 type="submit"
-                label="Create Schedule"
+                label={id ? "Update Schedule" : "Create Schedule"}
                 loading={loading}
                 size="small"
                 variant="contained"
@@ -226,18 +235,6 @@ export default function ScheduleForm() {
               </Grid>
             </CardContent>
           </Card>
-
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
-
-          {success && (
-            <Typography color="success.main" variant="body2">
-              {success}
-            </Typography>
-          )}
         </Stack>
       </form>
     </>

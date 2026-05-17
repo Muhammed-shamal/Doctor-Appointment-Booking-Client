@@ -6,7 +6,8 @@ import MDataTable from "../../components/DataGrid/MDataTable";
 import Header from "../../components/Header";
 import MButton from "../../components/Buttons/MBtn";
 import { getDoctors } from "../doctors/doctorThunks";
-import { getDoctorSchedules } from "./scheduleThunks";
+import { deleteSchedule, getDoctorSchedules } from "./scheduleThunks";
+import { DeleteConfirmDialog } from "../../components/Modal/MConfirmDiolog";
 
 export default function ScheduleList() {
   const dispatch = useDispatch();
@@ -23,6 +24,12 @@ export default function ScheduleList() {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedDoctor, setSelectedDoctor] = useState("");
+
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    schedule: null,
+  });
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (!doctors || doctors.length === 0) dispatch(getDoctors());
@@ -51,7 +58,8 @@ export default function ScheduleList() {
       {
         label: "Doctor",
         field: "doctor.fname",
-        render: (row) => `${row.doctor?.fname || ""} ${row.doctor?.lname || ""}`.trim(),
+        render: (row) =>
+          `${row.doctor?.fname || ""} ${row.doctor?.lname || ""}`.trim(),
         sortable: true,
       },
       {
@@ -59,18 +67,19 @@ export default function ScheduleList() {
         field: "date",
         sortable: true,
         isDate: true,
-        render: (row) => row.date ? new Date(row.date).toLocaleDateString() : "",
+        render: (row) =>
+          row.date ? new Date(row.date).toLocaleDateString() : "",
       },
-      {
-        label: "Start Time",
-        field: "startTime",
-        sortable: false,
-      },
-      {
-        label: "End Time",
-        field: "endTime",
-        sortable: false,
-      },
+      // {
+      //   label: "Start Time",
+      //   field: "startTime",
+      //   sortable: false,
+      // },
+      // {
+      //   label: "End Time",
+      //   field: "endTime",
+      //   sortable: false,
+      // },
       {
         label: "Slot Duration (min)",
         field: "slotDuration",
@@ -81,18 +90,51 @@ export default function ScheduleList() {
     [],
   );
 
-  const doctorOptions = doctors.map((d) => ({ label: `${d.fname || ""} ${d.lname || ""}`.trim(), value: d._id }));
+  // Table actions - Update and Delete
+  const actions = [
+    {
+      label: "Edit",
+      handler: (schedule) => {
+        navigate(`/schedules/${schedule._id}`);
+      },
+    },
+    {
+      label: "Delete",
+      handler: (schedule) => {
+        setDeleteDialog({ open: true, schedule });
+      },
+    },
+  ];
 
-  const searchConfig = {
-    placeholder: "Search schedules...",
-    value: "",
-    onChange: () => {},
-  };
+  const doctorOptions = doctors.map((d) => ({
+    label: `${d.fname || ""} ${d.lname || ""}`.trim(),
+    value: d._id,
+  }));
+
+  // const searchConfig = {
+  //   placeholder: "Search schedules...",
+  //   value: "",
+  //   onChange: () => {},
+  // };
 
   const filterConfig = {
     value: selectedDoctor,
     onChange: handleDoctorFilterChange,
     options: doctorOptions,
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteDialog.schedule) return;
+
+    try {
+      setDeleteLoading(true);
+      await dispatch(deleteSchedule(deleteDialog.schedule._id)).unwrap();
+      setDeleteDialog({ open: false, schedule: null });
+    } catch (err) {
+      console.error("Delete failed:", err);
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   const totalPages = Math.ceil((schedules?.length || 0) / rowsPerPage) || 1;
@@ -125,16 +167,29 @@ export default function ScheduleList() {
           loading={loading || loadingDoctors}
           columns={columns}
           page={page}
+          actions={actions}
           onPageChange={handlePageChange}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           totalPages={totalPages}
-          search={searchConfig}
+          // search={searchConfig}
           filters={filterConfig}
           title="Schedules List"
           exportToExcel={true}
         />
       </Box>
+
+      <DeleteConfirmDialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, schedule: null })}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Schedule"
+        question={
+          "Are you sure you want to delete data? This action cannot be undone."
+        }
+        loading={deleteLoading}
+        confirmAsync={true}
+      />
     </>
   );
 }

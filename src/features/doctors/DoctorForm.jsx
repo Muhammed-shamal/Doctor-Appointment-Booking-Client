@@ -23,7 +23,6 @@ import MButton from "../../components/Buttons/MBtn";
 import MBackButton from "../../components/Buttons/MBackButton";
 import Header from "../../components/Header.jsx";
 import { getDoctorById, createDoctor, updateDoctor } from "./doctorThunks";
-import { clearDoctorError, resetSelectedDoctor } from "./doctorSlice";
 
 export default function DoctorForm() {
   const dispatch = useDispatch();
@@ -31,10 +30,9 @@ export default function DoctorForm() {
   const theme = useTheme();
   const { id } = useParams();
 
-  const doctorState = useSelector((state) => state.doctor || {});
+  const doctorState = useSelector((state) => state.doctor);
   const selectedDoctor = doctorState.selectedDoctor;
-  const loading = doctorState.loading || false;
-  const error = doctorState.error;
+  const loading = doctorState.loading;
 
   const { handleSubmit, reset, control, watch } = useForm({
     defaultValues: {
@@ -71,15 +69,16 @@ export default function DoctorForm() {
 
   useEffect(() => {
     if (id) {
+      console.log('gettin id',id)
       dispatch(getDoctorById(id));
     } else {
       reset();
-      dispatch(resetSelectedDoctor());
     }
   }, [id, dispatch, reset]);
 
   useEffect(() => {
     if (id && selectedDoctor && selectedDoctor._id === id) {
+      console.log("selectedDoctor",selectedDoctor)
       reset({
         fname: selectedDoctor.fname || "",
         lname: selectedDoctor.lname || "",
@@ -106,7 +105,7 @@ export default function DoctorForm() {
       } else {
         await dispatch(createDoctor(data)).unwrap();
       }
-      navigate("/doctors");
+      navigate("/doctors/list");
     } catch (err) {
       console.error("Save failed:", err);
     }
@@ -135,14 +134,6 @@ export default function DoctorForm() {
           }
           action={
             <Box sx={{ display: "flex", gap: 1 }}>
-              {/* <MButton
-                label="Cancel"
-                onClick={() => navigate("/doctors")}
-                variant="outlined"
-                color="primary"
-                size="small"
-              /> */}
-
               <MButton
                 type="submit"
                 label={id ? "Update Doctor" : "Create Doctor"}

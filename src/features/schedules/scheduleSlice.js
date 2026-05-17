@@ -10,6 +10,10 @@ import {
 const initialState = {
   schedules: [],
   selectedSchedule: null,
+  totalSchedules: 0,
+  currentPage: 1,
+  limit: 10,
+
   loading: false,
   error: null,
   success: null,
@@ -38,7 +42,8 @@ const scheduleSlice = createSlice({
       })
       .addCase(createSchedule.fulfilled, (state, action) => {
         state.loading = false;
-        const schedule = action.payload?.schedule || action.payload;
+        const schedule = action.payload;
+        
         if (schedule) state.schedules.push(schedule);
         state.success = action.payload.message || "Schedule created";
       })
@@ -47,14 +52,14 @@ const scheduleSlice = createSlice({
         state.error = action.payload;
       })
 
-      // createSchedule
+      // updateSchedule
       .addCase(updateSchedule.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(updateSchedule.fulfilled, (state, action) => {
         state.loading = false;
-        const updatedSchedule = action.payload.schedule;
+        const updatedSchedule = action.payload;
         const index = state.schedules.findIndex(
           (s) => s._id === updateSchedule._id,
         );
@@ -79,7 +84,10 @@ const scheduleSlice = createSlice({
       })
       .addCase(getDoctorSchedules.fulfilled, (state, action) => {
         state.loading = false;
-        state.schedules = action.payload?.schedules || action.payload || [];
+        state.schedules = action.payload.results;
+        state.totalSchedules = action.payload.totalCount;
+        state.currentPage = action.payload.currentPage;
+        state.limit = action.payload.totalPages;
       })
       .addCase(getDoctorSchedules.rejected, (state, action) => {
         state.loading = false;
@@ -93,7 +101,7 @@ const scheduleSlice = createSlice({
       })
       .addCase(getScheduleById.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedSchedule = action.payload.schedule;
+        state.selectedSchedule = action.payload;
       })
       .addCase(getScheduleById.rejected, (state, action) => {
         state.loading = false;
@@ -109,7 +117,7 @@ const scheduleSlice = createSlice({
         state.loading = false;
         const id = action.payload.id;
 
-        state.doctors = state.doctors.filter((d) => d._id !== id);
+        state.schedules = state.schedules.filter((d) => d._id !== id);
         if (state.selectedSchedule?._id === id) {
           state.selectedSchedule = null;
         }

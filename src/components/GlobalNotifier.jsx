@@ -6,6 +6,8 @@ import {
   clearDoctorError,
   clearDoctorSuccess,
 } from "../features/doctors/doctorSlice";
+import { clearScheduleError, clearScheduleSuccess } from "../features/schedules/scheduleSlice";
+import { clearDashboardError } from "../features/dashboard/dashboardSlice";
 
 const GlobalNotifier = () => {
   const dispatch = useDispatch();
@@ -18,7 +20,12 @@ const GlobalNotifier = () => {
   const { error: doctorError, success: doctorSuccess } = useSelector(
     (state) => state.doctor,
   );
-  // const { error: dashboardError } = useSelector((state) => state.dashboard);
+
+  const { error: scheduleError, success: scheduleSuccess } = useSelector(
+    (state) => state.schedule,
+  );
+
+  const { error: dashboardError } = useSelector((state) => state.dashboard);
 
   useEffect(() => {
     if (authError) {
@@ -41,16 +48,28 @@ const GlobalNotifier = () => {
       dispatch(clearDoctorSuccess());
     }
 
-    // if (dashboardError) {
-    //   Toast(dashboardError, "error");
-    //   dispatch(clearError ());
-    // }
+    if (scheduleError) {
+      Toast(scheduleError, "error");
+      dispatch(clearScheduleError());
+    }
+
+    if (scheduleSuccess) {
+      Toast(scheduleSuccess, "success");
+      dispatch(clearScheduleSuccess());
+    }
+
+    if (dashboardError) {
+      Toast(dashboardError, "error");
+      dispatch(clearDashboardError());
+    }
   }, [
     authError,
     authSuccess,
     doctorError,
     doctorSuccess,
-    // dashboardError,
+    scheduleError,
+    scheduleSuccess,
+    dashboardError,
     Toast,
     dispatch,
   ]);

@@ -17,9 +17,13 @@ export const createSchedule = createAsyncThunk(
 
 export const updateSchedule = createAsyncThunk(
   "schedule/updateSchedule",
-  async (scheduleId, scheduleData, { rejectWithValue }) => {
+  async ({ scheduleId, scheduleData }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.put(`/schedules/${scheduleId}`, scheduleData);
+      
+      const res = await axiosInstance.put(
+        `/schedules/${scheduleId}`,
+        scheduleData,
+      );
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -33,7 +37,8 @@ export const getDoctorSchedules = createAsyncThunk(
   "schedule/getDoctorSchedules",
   async (doctorId, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get(`/schedules/${doctorId}`);
+      const res = await axiosInstance.get(`/schedules/doctor/${doctorId}`);
+      console.log("doctor schedules", res.data);
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -48,7 +53,7 @@ export const getScheduleById = createAsyncThunk(
   async (scheduleId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`schedules/${scheduleId}`);
-      console.log('response selectedSchedule',response);
+      console.log("response selectedSchedule", response);
       return response.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -57,7 +62,6 @@ export const getScheduleById = createAsyncThunk(
     }
   },
 );
-
 
 export const deleteSchedule = createAsyncThunk(
   "schedule/deleteSchedule",
