@@ -6,6 +6,7 @@ export const LoacalVariables = {
   UserType: "UserType",
   Name: "Name",
   Email: "Email",
+  Phone: "Phone",
   Address: "Address",
 };
 
@@ -30,7 +31,8 @@ export const validations = {
     required: "Password is required",
     pattern: {
       value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
-      message: "Password must be at least 8 characters, include letters and numbers",
+      message:
+        "Password must be at least 8 characters, include letters and numbers",
     },
   },
 };

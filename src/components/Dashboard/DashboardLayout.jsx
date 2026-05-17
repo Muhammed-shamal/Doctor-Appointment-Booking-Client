@@ -5,6 +5,9 @@ import {
   People,
   Inventory2,
   BrandingWatermarkSharp,
+  Home,
+  LocalHospital,
+  BookOnline
 } from '@mui/icons-material'
 import { Outlet } from "react-router-dom";
 import Sidebar from "./SideBar";
@@ -32,13 +35,14 @@ const DashboardLayout = () => {
     setCollapse(!collapse);
   };
 
-
+  
+  //admin menu by default;
   const navItems = [
-    // { path: '/', label: 'Home', icon: <Home /> },
-    { path: '/product/list', label: 'Products', icon: <Inventory2 /> },
-    { path: '/brand/list', label: 'Brands', icon: <BrandingWatermarkSharp /> },
-    { path: '/category/list', label: 'Categories', icon: <Category /> },
-    { path: '/customer/list', label: 'Customers', icon: <People /> }
+    { path: '/', label: 'Home', icon: <Home /> },
+    { path: '/patients/list', label: 'Products', icon: <People /> },
+    { path: '/doctors/list', label: 'Brands', icon: <LocalHospital /> },
+    { path: '/slots/list', label: 'Categories', icon: <Category /> },
+    { path: '/appointments/list', label: 'Customers', icon: <BookOnline /> }
   ];
 
   return (
@@ -48,8 +52,8 @@ const DashboardLayout = () => {
         backgroundColor={backgroundColor}
         collapse={collapse}
       />}
+      
       {/* <Header /> */}
-
       <Sidebar
         collapse={collapse}
         handleCollapse={handleCollapse}
@@ -67,9 +71,7 @@ const DashboardLayout = () => {
          textOneColor={theme.palette.primary.mainOne}
 
         iconColor={iconColor}
-      />
-
-      {/* {isSmallScreen && <ResponsiveHeaderBar />} */}
+      />      
 
       {/* Main Content */}
       <Box
