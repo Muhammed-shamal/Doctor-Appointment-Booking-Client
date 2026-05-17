@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { forgotPassword, loginUser, registerUser } from "./authThunks";
+import { forgotPassword, getMyRefresh, loginUser, registerUser } from "./authThunks";
 import { LoacalVariables, setLocalValues } from "../../common/commonFunction";
 
 const userStorage = localStorage.getItem("user");
@@ -61,6 +61,7 @@ const authSlice = createSlice({
 
       .addCase(registerUser.fulfilled, (state, action) => {
         const payload = action.payload.data;
+        const message = action.payload.message;
 
         state.loading = false;
         state.success = message;
@@ -127,6 +128,20 @@ const authSlice = createSlice({
       })
 
       .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(getMyRefresh.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyRefresh.fulfilled, (state, action) => {
+        state.loading = false;
+        state.accessToken = action.payload.data.accessToken;
+        state.user = action.payload.data.user;
+      })
+      .addCase(getMyRefresh.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

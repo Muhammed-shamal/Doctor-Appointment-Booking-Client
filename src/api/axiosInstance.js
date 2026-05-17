@@ -1,71 +1,77 @@
 import axios from "axios";
 import { API_URL } from "./constant";
-import { store } from "../redux/store";
-import { logout, setAccessToken } from "../features/auth/authSlice";
+import authService from './auth';
 
 const axiosInstance = axios.create({
   baseURL: API_URL.BASE_URL,
-  timeout: 20000, // timeout in milliseconds (e.g., 20 seconds)
-  withCredentials: true,
+  timeout: 30000,
+  withCredentials: true, // Important for HttpOnly cookies
 });
 
-const refreshInstance = axios.create({
-  baseURL: API_URL.BASE_URL,
-  timeout: 20000, // timeout in milliseconds (e.g., 20 seconds)
-  withCredentials: true,
-});
+// Request interceptor
+axiosInstance.interceptors.request.use(async (config) => {
+  // Skip auth header for refresh endpoint
+  if (config.url?.includes('/auth/refresh-token')) {
+    return config;
+  }
 
-//request;
-axiosInstance.interceptors.request.use((config) => {
-  const token = store.getState().auth.accessToken;
+  let token = authService.getAccessToken();
+  
+  if (!token) {
+    // Try to refresh silently
+    try {
+      token = await authService.refreshToken();
+    } catch (error) {
+      // Redirect to login if refresh fails
+      window.location.href = '/login';
+      return Promise.reject(error);
+    }
+  }
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
+  
   return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
-//response;
+// Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
-
   async (error) => {
     const originalRequest = error.config;
-
-    // Access token expired
+    
+    // Handle 401 Unauthorized
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
+      
       try {
-        // Call refresh endpoint
-        const response = await refreshInstance.post("/auth/refresh");
-        console.log('response from refrehs');
-
-        const newAccessToken = response.data.accessToken;
-
-        // Save new token
-        store.dispatch(setAccessToken(newAccessToken));
-
-        // Update failed request
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-        // Retry original request
+        const newToken = await authService.refreshToken();
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // Refresh failed → logout
-        handleAutoLogout();
+        // Refresh failed - redirect to login
+        authService.clearAuth();
+        
+        // Prevent infinite redirect loop
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       }
     }
-
+    
+    // Handle 403 Forbidden
+    if (error.response?.status === 403) {
+      // User doesn't have permission so by default redirect to unauthorized page;
+      window.location.href = '/unauthorized';
+    }
+    
     return Promise.reject(error);
-  },
+  }
 );
 
-// 🔒 Logout and redirect user
-function handleAutoLogout() {
-  store.dispatch(logout());
-}
 
 export default axiosInstance;

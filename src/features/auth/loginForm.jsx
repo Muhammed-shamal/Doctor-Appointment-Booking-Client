@@ -32,12 +32,13 @@ import logo from "../../assets/vite.svg";
 import MButton from "../../components/Buttons/MBtn";
 import MTextField from "../../components/TextBox/MTextField";
 import { TextType } from "../../components/TextBox/types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ForgotPassword from "./ForgotPassword";
 import { validations } from "../../common/commonFunction";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { handleSubmit, control } = useForm();
 
   const theme = useTheme();
@@ -48,8 +49,9 @@ const Login = () => {
   const [forgotPasswordOpen, setForgotPasswordOpen] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const onSubmit = (data) => {
-    dispatch(loginUser(data));
+  const onSubmit = async (data) => {
+    await dispatch(loginUser(data)).unwrap();
+    navigate("/");
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

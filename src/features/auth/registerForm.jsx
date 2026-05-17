@@ -34,11 +34,12 @@ import logo from "../../assets/vite.svg";
 import MButton from "../../components/Buttons/MBtn";
 import MTextField from "../../components/TextBox/MTextField";
 import { TextType } from "../../components/TextBox/types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validations } from "../../common/commonFunction";
 
 const Register = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { handleSubmit, control, watch } = useForm();
 
   const theme = useTheme();
@@ -51,9 +52,10 @@ const Register = () => {
 
   const password = watch("password");
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { confirmPassword, ...submitData } = data;
-    dispatch(registerUser(submitData));
+    await dispatch(registerUser(submitData)).unwrap();
+    navigate("/login");
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

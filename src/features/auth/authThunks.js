@@ -1,57 +1,43 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { API_URL } from '../../api/constant';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_URL } from "../../api/constant";
+import axiosInstance from "../../api/axiosInstance";
 
 export const registerUser = createAsyncThunk(
-  'auth/RegisterUser',
+  "auth/RegisterUser",
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL.BASE_URL}/auth/developer/register/QwertyuioP`, credentials);
-      console.log("response from register",response);
+      const response = await axios.post(
+        `${API_URL.BASE_URL}/auth/developer/register/QwertyuioP`,
+        credentials,
+      );
+      console.log("response from register", response);
       return response.data;
     } catch (error) {
-      console.error('Register error:', error.response?.data);
-      return rejectWithValue(error.response?.data?.message || 'Register failed! Please try again!');
+      console.error("Register error:", error.response?.data);
+      return rejectWithValue(
+        error.response?.data?.message || "Register failed! Please try again!",
+      );
     }
-  }
+  },
 );
 
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+  "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL.BASE_URL}/auth/login`, credentials);
+      const response = await axios.post(
+        `${API_URL.BASE_URL}/auth/login`,
+        credentials,
+      );
       return response.data;
     } catch (error) {
-      console.error('Login error:', error.response?.data);
-      return rejectWithValue(error.response?.data?.message || 'Login failed! Please try again!');
+      console.error("Login error:", error.response?.data);
+      return rejectWithValue(
+        error.response?.data?.message || "Login failed! Please try again!",
+      );
     }
-  }
-);
-
-export const getMe = createAsyncThunk(
-  'auth/me',
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get('/auth/me');
-      console.log('get me response',response);
-      return response;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'failed to fetch profile!');
-    }
-  }
-);
-
-export const logoutUser = createAsyncThunk(
-  'auth/logoutUser',
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/auth/logout', credentials);
-      return response;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed Please try again!');
-    }
-  }
+  },
 );
 
 export const forgotPassword = createAsyncThunk(
@@ -60,16 +46,57 @@ export const forgotPassword = createAsyncThunk(
     try {
       const response = await axios.post(
         `${API_URL.BASE_URL}/auth/forgot-password`,
-        { email }
+        { email },
       );
 
-      console.log('response forgot',response)
+      console.log("response forgot", response);
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to send reset password link"
+        error.response?.data?.message || "Failed to send reset password link",
       );
     }
-  }
+  },
+);
+
+export const getMyRefresh = createAsyncThunk(
+  "auth/refresh",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post("/auth/refresh");
+
+      return res.data;
+    } catch (err) {
+      return rejectWithValue("Session expired");
+    }
+  },
+);
+
+export const getMe = createAsyncThunk(
+  "auth/me",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/auth/me");
+      console.log("get me response", response);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "failed to fetch profile!",
+      );
+    }
+  },
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/auth/logout", credentials);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Login failed Please try again!",
+      );
+    }
+  },
 );
