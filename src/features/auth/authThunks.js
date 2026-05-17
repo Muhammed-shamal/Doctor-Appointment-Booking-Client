@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "../../api/constant";
 import axiosInstance from "../../api/axiosInstance";
+import authService from "../../api/auth";
 
 export const registerUser = createAsyncThunk(
   "auth/RegisterUser",
@@ -30,6 +31,7 @@ export const loginUser = createAsyncThunk(
         `${API_URL.BASE_URL}/auth/login`,
         credentials,
       );
+      authService.setAccessToken(response.data.accessToken);
       return response.data;
     } catch (error) {
       console.error("Login error:", error.response?.data);
@@ -66,15 +68,15 @@ export const refreshTokenOnLoad = createAsyncThunk(
       // Step 1: Refresh token
       const refreshResponse = await axiosInstance.post("/auth/refresh-token");
       const { accessToken } = refreshResponse.data;
-      
+
       // Step 2: Immediately fetch user data with new token
       const userResponse = await axiosInstance.get("/auth/me");
       const userData = userResponse.data.data.user;
-      
+
       // Return both token and user data
       return {
         accessToken,
-        user: userData
+        user: userData,
       };
     } catch (error) {
       // Differentiate between network error vs auth error
@@ -82,13 +84,13 @@ export const refreshTokenOnLoad = createAsyncThunk(
         // Session expired - normal flow, not a real error
         return rejectWithValue(null);
       }
-      
+
       // Network error or server error
       return rejectWithValue(
-        error.response?.data?.message || "Failed to initialize application"
+        error.response?.data?.message || "Failed to initialize application",
       );
     }
-  }
+  },
 );
 
 export const logoutUser = createAsyncThunk(
@@ -96,6 +98,7 @@ export const logoutUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/auth/logout", credentials);
+      authService.clearAuth();
       return response;
     } catch (error) {
       return rejectWithValue(

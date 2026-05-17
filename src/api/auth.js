@@ -37,6 +37,8 @@ class AuthService {
       const response = await axios.post(`${API_URL.BASE_URL}/auth/refresh-token`, {}, {
         withCredentials: true
       });
+
+      console.log('try to refresh the token',response);
       
       const { accessToken } = response.data;
       this.setAccessToken(accessToken);
@@ -64,6 +66,7 @@ class AuthService {
   }
 
   getAccessToken() {
+    console.log('this token',this.accessToken);
     // Check if we have a valid token in memory
     if (this.accessToken && !this.isTokenExpired(this.accessToken)) {
       return this.accessToken;
