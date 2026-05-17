@@ -6,7 +6,7 @@ export const getDoctors = createAsyncThunk(
   "doctor/getDoctors",
   async (params, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`${API_URL.BASE_URL}/api/doctors`, {
+      const response = await axiosInstance.get('/doctors', {
         params,
       });
       return response.data.result;
@@ -23,7 +23,7 @@ export const getDoctorById = createAsyncThunk(
   async (doctorId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `${API_URL.BASE_URL}/api/doctors/${doctorId}`
+        `doctors/${doctorId}`
       );
       return response.data.result;
     } catch (error) {
@@ -39,7 +39,7 @@ export const createDoctor = createAsyncThunk(
   async (doctorData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
-        `${API_URL.BASE_URL}/api/doctors`,
+        '/doctors',
         doctorData
       );
       return response.data.result;
@@ -56,7 +56,7 @@ export const updateDoctor = createAsyncThunk(
   async ({ doctorId, doctorData }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.put(
-        `${API_URL.BASE_URL}/api/doctors/${doctorId}`,
+        `/doctors/${doctorId}`,
         doctorData
       );
       return response.data.result;
@@ -73,7 +73,7 @@ export const deleteDoctor = createAsyncThunk(
   async (doctorId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(
-        `${API_URL.BASE_URL}/api/doctors/${doctorId}`
+        `/doctors/${doctorId}`
       );
       return response.data.result;
     } catch (error) {

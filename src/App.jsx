@@ -11,6 +11,8 @@ import Register from "./features/auth/registerForm";
 import { refreshTokenOnLoad } from "./features/auth/authThunks";
 import { useEffect } from "react";
 import Unauthorized from "./features/Unauthorized";
+import DoctorList from "./features/doctors/DoctorList";
+import DoctorForm from "./features/doctors/DoctorForm";
 
 function App() {
   const dispatch = useDispatch();
@@ -53,6 +55,11 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
+            
+            {/* Doctor Routes */}
+            <Route path="doctors/list" element={<DoctorList />} />
+            <Route path="doctors/new" element={<DoctorForm />} />
+            <Route path="doctors/:id" element={<DoctorForm />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>
