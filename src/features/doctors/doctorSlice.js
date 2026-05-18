@@ -48,7 +48,7 @@ const doctorSlice = createSlice({
         state.doctors = action.payload.results;
         state.totalDoctors = action.payload.totalCount;
         state.currentPage = action.payload.currentPage;
-        state.limit = action.payload.totalPages;
+        state.limit = action.payload.limit;
       })
       .addCase(getDoctors.rejected, (state, action) => {
         state.loading = false;

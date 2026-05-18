@@ -47,7 +47,7 @@ export default function DoctorList() {
   const debouncedMaxFee = useDebounce(maxFee, 500);
   const debouncedMinExperience = useDebounce(minExperience, 500);
 
-  // Fetch doctors when page or rowsPerPage changes
+  // Fetch doctors when page, filters, or search changes
   useEffect(() => {
     dispatch(
       getDoctors({
@@ -73,9 +73,7 @@ export default function DoctorList() {
 
   // Reset to first page when search or filter changes (only when debounced values change)
   useEffect(() => {
-    if (page !== 1) {
-      setPage(1);
-    }
+    setPage(1);
   }, [debouncedSearchTerm, filterValue, debouncedMinFee, debouncedMaxFee, debouncedMinExperience]);
 
   // Table columns configuration

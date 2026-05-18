@@ -10,15 +10,18 @@ import { theme } from "./theme.js";
 import GlobalNotifier from "./components/GlobalNotifier.jsx";
 import OfflineNotifier from "./components/OfflineNotifier.jsx";
 import { ToastProvider } from "./context/SnackBar.jsx";
+import { SocketProvider } from "./context/Socket.jsx";
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
       <ToastProvider>
-        <App />
-        {/* <LocalizationProvider dateAdapter={AdapterDateFns}> </LocalizationProvider> */}
-        <GlobalNotifier />
-        <OfflineNotifier />
+        <SocketProvider>
+          <App />
+          {/* <LocalizationProvider dateAdapter={AdapterDateFns}> </LocalizationProvider> */}
+          <GlobalNotifier />
+          <OfflineNotifier />
+        </SocketProvider>
       </ToastProvider>
     </ThemeProvider>
   </Provider>,

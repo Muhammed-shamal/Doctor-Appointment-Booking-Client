@@ -397,6 +397,7 @@ const MDataTable = ({
               <Typography fontWeight={600}>Doctor Filters</Typography>
 
               <TextField
+                fullWidth
                 type="number"
                 label="Min Fee"
                 size="small"
@@ -407,6 +408,7 @@ const MDataTable = ({
               />
 
               <TextField
+                fullWidth
                 type="number"
                 label="Max Fee"
                 size="small"
@@ -417,6 +419,7 @@ const MDataTable = ({
               />
 
               <TextField
+                fullWidth
                 type="number"
                 label="Min Experience"
                 size="small"
@@ -549,6 +552,7 @@ const MDataTable = ({
               onChange={(e) =>
                 filters.customNumericFilters.onMinFeeChange(e.target.value)
               }
+              sx={{ width: { xs: "100%", sm: 120 } }}
             />
 
             <TextField
@@ -559,6 +563,7 @@ const MDataTable = ({
               onChange={(e) =>
                 filters.customNumericFilters.onMaxFeeChange(e.target.value)
               }
+              sx={{ width: { xs: "100%", sm: 120 } }}
             />
 
             <TextField
@@ -571,6 +576,7 @@ const MDataTable = ({
                   e.target.value,
                 )
               }
+              sx={{ width: { xs: "100%", sm: 120 } }}
             />
           </Box>
         )}
