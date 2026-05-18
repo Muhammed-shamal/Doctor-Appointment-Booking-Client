@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -11,8 +11,8 @@ import {
   Box,
   Tooltip,
   Grow,
-} from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+} from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
   RoomService,
@@ -21,25 +21,25 @@ import {
   ShoppingCart,
   Menu as MenuIcon,
   Close as CloseIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 // Icon mapping for dynamic rendering
 const iconMap = {
-  Home: <Home />,
-  RoomService: <RoomService />,
-  DesignServices: <DesignServices />,
-  Person: <Person />,
-  ShoppingCart: <ShoppingCart />,
-  default: <MenuIcon />,
+  Home,
+  RoomService,
+  DesignServices,
+  Person,
+  ShoppingCart,
+  default: MenuIcon,
 };
 
-const BottomBar = ({ 
-  navItems, 
-  variant = 'default', // 'default', 'fab', 'floating'
+const BottomBar = ({
+  navItems,
+  variant = "default", // 'default', 'fab', 'floating'
   showLabels = true,
   showIcons = true,
-  activeColor = 'primary.main',
-  inactiveColor = 'text.secondary',
+  activeColor = "primary.main",
+  inactiveColor = "text.secondary",
   onItemClick,
   badgeCounts = {},
   elevation = 3,
@@ -50,7 +50,7 @@ const BottomBar = ({
   const location = useLocation();
   const navigate = useNavigate();
   const theme = useMuiTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [value, setValue] = useState(location.pathname);
   const [show, setShow] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -68,8 +68,8 @@ const BottomBar = ({
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [hideOnScroll, lastScrollY]);
 
   // Update value when location changes
@@ -85,14 +85,14 @@ const BottomBar = ({
 
   // Determine if item is active
   const isActive = (path) => {
-    if (path === '/') return value === path;
+    if (path === "/") return value === path;
     return value.startsWith(path);
   };
 
   // Get icon component
-  const getIcon = (iconName) => {
-    if (typeof iconName === 'object') return iconName;
-    return iconMap[iconName] || iconMap.default;
+  const getIcon = (Icon) => {
+    if (!Icon) return <MenuIcon />;
+    return typeof Icon === "function" ? <Icon /> : <Icon />;
   };
 
   // Get badge count
@@ -104,12 +104,12 @@ const BottomBar = ({
   const variantStyles = {
     default: {
       paper: {
-        position: 'fixed',
+        position: "fixed",
         bottom: 0,
         left: 0,
         right: 0,
         borderRadius: 0,
-        bgcolor: 'background.paper',
+        bgcolor: "background.paper",
       },
       bottomNav: {
         height: { xs: 56, sm: 65 },
@@ -118,12 +118,12 @@ const BottomBar = ({
     },
     floating: {
       paper: {
-        position: 'fixed',
+        position: "fixed",
         bottom: floatingOffset,
         left: floatingOffset,
         right: floatingOffset,
         borderRadius: 4,
-        bgcolor: 'background.paper',
+        bgcolor: "background.paper",
         boxShadow: theme.shadows[8],
       },
       bottomNav: {
@@ -133,19 +133,19 @@ const BottomBar = ({
     },
     fab: {
       paper: {
-        position: 'fixed',
+        position: "fixed",
         bottom: 0,
         left: 0,
         right: 0,
-        bgcolor: 'transparent',
-        boxShadow: 'none',
-        pointerEvents: 'none',
+        bgcolor: "transparent",
+        boxShadow: "none",
+        pointerEvents: "none",
       },
       bottomNav: {
         height: { xs: 60, sm: 70 },
-        bgcolor: 'background.paper',
-        borderRadius: { xs: '20px 20px 0 0', sm: '24px 24px 0 0' },
-        pointerEvents: 'auto',
+        bgcolor: "background.paper",
+        borderRadius: { xs: "20px 20px 0 0", sm: "24px 24px 0 0" },
+        pointerEvents: "auto",
       },
     },
   };
@@ -160,39 +160,39 @@ const BottomBar = ({
       sx={{
         height: currentStyle.bottomNav.height,
         ...currentStyle.bottomNav,
-        '& .MuiBottomNavigationAction-root': {
-          minWidth: 'auto',
+        "& .MuiBottomNavigationAction-root": {
+          minWidth: "auto",
           px: { xs: 1, sm: 2 },
-          transition: 'all 0.2s ease-in-out',
+          transition: "all 0.2s ease-in-out",
           color: inactiveColor,
-          '&.Mui-selected': {
+          "&.Mui-selected": {
             color: activeColor,
-            transform: 'translateY(-4px)',
+            transform: "translateY(-4px)",
           },
-          '&:hover': {
+          "&:hover": {
             color: activeColor,
-            transform: 'translateY(-2px)',
+            transform: "translateY(-2px)",
           },
         },
-        '& .MuiBottomNavigationAction-label': {
-          fontSize: { xs: '0.65rem', sm: '0.75rem' },
+        "& .MuiBottomNavigationAction-label": {
+          fontSize: { xs: "0.65rem", sm: "0.75rem" },
           fontWeight: 500,
-          transition: 'font-size 0.2s ease',
-          '&.Mui-selected': {
-            fontSize: { xs: '0.7rem', sm: '0.8rem' },
+          transition: "font-size 0.2s ease",
+          "&.Mui-selected": {
+            fontSize: { xs: "0.7rem", sm: "0.8rem" },
             fontWeight: 600,
           },
         },
-        '& .MuiSvgIcon-root': {
-          fontSize: { xs: '1.4rem', sm: '1.6rem' },
-          transition: 'transform 0.2s ease',
+        "& .MuiSvgIcon-root": {
+          fontSize: { xs: "1.4rem", sm: "1.6rem" },
+          transition: "transform 0.2s ease",
         },
       }}
     >
       {navItems.map((item, index) => {
         const isItemActive = isActive(item.path);
         const badgeCount = getBadgeCount(item.path);
-        
+
         return (
           <Tooltip
             key={item.path}
@@ -202,7 +202,7 @@ const BottomBar = ({
             arrow
           >
             <BottomNavigationAction
-              label={showLabels ? item.label : ''}
+              label={showLabels ? item.label : ""}
               icon={
                 showIcons ? (
                   badgeCount > 0 ? (
@@ -210,11 +210,11 @@ const BottomBar = ({
                       badgeContent={badgeCount}
                       color="error"
                       sx={{
-                        '& .MuiBadge-badge': {
-                          fontSize: '0.7rem',
+                        "& .MuiBadge-badge": {
+                          fontSize: "0.7rem",
                           height: 18,
                           minWidth: 18,
-                          transform: 'scale(1) translate(30%, -30%)',
+                          transform: "scale(1) translate(30%, -30%)",
                         },
                       }}
                     >
@@ -227,9 +227,9 @@ const BottomBar = ({
               }
               value={item.path}
               sx={{
-                '&.Mui-selected': {
-                  '& .MuiSvgIcon-root': {
-                    transform: 'scale(1.1)',
+                "&.Mui-selected": {
+                  "& .MuiSvgIcon-root": {
+                    transform: "scale(1.1)",
                   },
                 },
                 ...item.sx,
@@ -247,33 +247,33 @@ const BottomBar = ({
   const FabBottomNav = () => (
     <Box
       sx={{
-        position: 'fixed',
+        position: "fixed",
         bottom: 0,
         left: 0,
         right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-end',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-end",
         pb: 2,
-        pointerEvents: 'none',
+        pointerEvents: "none",
         zIndex: 1400,
       }}
     >
       <Paper
         elevation={elevation}
         sx={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          width: 'auto',
-          minWidth: { xs: '90%', sm: 'auto' },
-          maxWidth: { xs: '90%', sm: 600 },
-          bgcolor: 'background.paper',
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+          width: "auto",
+          minWidth: { xs: "90%", sm: "auto" },
+          maxWidth: { xs: "90%", sm: 600 },
+          bgcolor: "background.paper",
           borderRadius: 8,
           px: { xs: 1, sm: 2 },
           py: 0.5,
-          position: 'relative',
-          pointerEvents: 'auto',
+          position: "relative",
+          pointerEvents: "auto",
         }}
       >
         {navItems.slice(0, 2).map((item) => (
@@ -283,18 +283,18 @@ const BottomBar = ({
               value={item.path}
               onClick={() => handleChange(null, item.path)}
               sx={{
-                minWidth: 'auto',
+                minWidth: "auto",
                 px: 2,
                 py: 1,
                 color: isActive(item.path) ? activeColor : inactiveColor,
-                '& .MuiSvgIcon-root': {
+                "& .MuiSvgIcon-root": {
                   fontSize: 24,
                 },
               }}
             />
           </Tooltip>
         ))}
-        
+
         {/* Center FAB Button */}
         <Fab
           color="primary"
@@ -303,24 +303,26 @@ const BottomBar = ({
             if (centerItem) handleChange(null, centerItem.path);
           }}
           sx={{
-            position: 'relative',
+            position: "relative",
             top: -20,
             width: 56,
             height: 56,
             boxShadow: theme.shadows[8],
             background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-            '&:hover': {
-              transform: 'scale(1.05)',
+            "&:hover": {
+              transform: "scale(1.05)",
               background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
             },
-            transition: 'transform 0.2s ease',
+            transition: "transform 0.2s ease",
           }}
         >
-          {navItems[Math.floor(navItems.length / 2)]?.icon ? 
-            getIcon(navItems[Math.floor(navItems.length / 2)].icon) : 
-            <MenuIcon />}
+          {navItems[Math.floor(navItems.length / 2)]?.icon ? (
+            getIcon(navItems[Math.floor(navItems.length / 2)].icon)
+          ) : (
+            <MenuIcon />
+          )}
         </Fab>
-        
+
         {navItems.slice(2, 4).map((item) => (
           <Tooltip key={item.path} title={item.label} placement="top">
             <BottomNavigationAction
@@ -328,11 +330,11 @@ const BottomBar = ({
               value={item.path}
               onClick={() => handleChange(null, item.path)}
               sx={{
-                minWidth: 'auto',
+                minWidth: "auto",
                 px: 2,
                 py: 1,
                 color: isActive(item.path) ? activeColor : inactiveColor,
-                '& .MuiSvgIcon-root': {
+                "& .MuiSvgIcon-root": {
                   fontSize: 24,
                 },
               }}
@@ -346,7 +348,7 @@ const BottomBar = ({
   // Container with scroll animation
   const ContainerComponent = ({ children }) => {
     if (!animateOnScroll && !hideOnScroll) return children;
-    
+
     return (
       <Zoom in={show} timeout={300}>
         <Box>{children}</Box>
@@ -354,8 +356,12 @@ const BottomBar = ({
     );
   };
 
-  if (variant === 'fab') {
-    return <ContainerComponent><FabBottomNav /></ContainerComponent>;
+  if (variant === "fab") {
+    return (
+      <ContainerComponent>
+        <FabBottomNav />
+      </ContainerComponent>
+    );
   }
 
   return (
@@ -364,10 +370,16 @@ const BottomBar = ({
         elevation={elevation}
         sx={{
           ...currentStyle.paper,
-          borderTop: variant === 'default' ? `1px solid ${theme.palette.divider}` : 'none',
-          backdropFilter: variant === 'floating' ? 'blur(10px)' : 'none',
-          bgcolor: variant === 'floating' ? 'rgba(255, 255, 255, 0.95)' : 'background.paper',
-          transition: 'all 0.3s ease',
+          borderTop:
+            variant === "default"
+              ? `1px solid ${theme.palette.divider}`
+              : "none",
+          backdropFilter: variant === "floating" ? "blur(10px)" : "none",
+          bgcolor:
+            variant === "floating"
+              ? "rgba(255, 255, 255, 0.95)"
+              : "background.paper",
+          transition: "all 0.3s ease",
         }}
       >
         <BottomNavComponent />
@@ -377,13 +389,17 @@ const BottomBar = ({
 };
 
 // Pre-configured variants for common use cases
-export const DefaultBottomBar = (props) => <BottomBar variant="default" {...props} />;
-export const FloatingBottomBar = (props) => <BottomBar variant="floating" {...props} />;
+export const DefaultBottomBar = (props) => (
+  <BottomBar variant="default" {...props} />
+);
+export const FloatingBottomBar = (props) => (
+  <BottomBar variant="floating" {...props} />
+);
 export const FABBottomBar = (props) => <BottomBar variant="fab" {...props} />;
 
 // HOC for adding safe area insets (for mobile notches)
 export const WithSafeArea = ({ children }) => (
-  <Box sx={{ pb: { xs: 'env(safe-area-inset-bottom)', sm: 0 } }}>
+  <Box sx={{ pb: { xs: "env(safe-area-inset-bottom)", sm: 0 } }}>
     {children}
   </Box>
 );

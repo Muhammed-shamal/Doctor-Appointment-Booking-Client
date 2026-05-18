@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+
 import {
   Drawer,
   Box,
@@ -23,6 +23,7 @@ import Logo2 from "../../assets/vite.svg";
 import { getMenu } from "./menu";
 
 const Sidebar = ({
+  user,
   open,
   handleCollapse,
   handleDrawerToggle,
@@ -40,7 +41,6 @@ const Sidebar = ({
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
-  const { user } = useSelector((state) => state.auth);
 
   const [hoveredMenuPosition, setHoveredMenuPosition] = useState({ top: 0 });
 
@@ -81,7 +81,7 @@ const Sidebar = ({
     }, 10);
   };
 
-  const menu = getMenu(user.role || "patient");
+  const menu = getMenu(user?.role);
 
   return (
     <Drawer
@@ -140,7 +140,7 @@ const Sidebar = ({
       </Box>
 
       <List sx={{ px: 1, py: 2 }}>
-        {menu.staticMenu.map((item) => (
+        {menu.map((item) => (
           <React.Fragment key={item.id}>
             <li
               id={`menu-item-${item.id}`}

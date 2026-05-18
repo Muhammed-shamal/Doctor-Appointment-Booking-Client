@@ -7,17 +7,20 @@ import {
   BrandingWatermarkSharp,
   Home,
   LocalHospital,
-  BookOnline
-} from '@mui/icons-material'
+  BookOnline,
+} from "@mui/icons-material";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./SideBar";
 import Navbar from "./Navbar";
 import BottomBar from "./AppBar";
+import { useSelector } from "react-redux";
+import { getMenu } from "./menu";
 
 const DashboardLayout = () => {
   const theme = useTheme();
+  const { user } = useSelector((state) => state.auth);
 
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [open, setOpen] = useState(!isSmallScreen);
   const [collapse, setCollapse] = useState(false);
@@ -30,26 +33,18 @@ const DashboardLayout = () => {
     setCollapse(!collapse);
   };
 
-  
-  //admin menu by default;
-  const navItems = [
-    { path: '/', label: 'Home', icon: <Home /> },
-    { path: '/patients/list', label: 'Products', icon: <People /> },
-    { path: '/doctors/list', label: 'Brands', icon: <LocalHospital /> },
-    { path: '/slots/list', label: 'Categories', icon: <Category /> },
-    { path: '/appointments/list', label: 'Customers', icon: <BookOnline /> }
-  ];
+  console.log("user is", user);
+  const menu = getMenu(user?.role);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#F9FAFB" }}>
+      {!isSmallScreen && (
+        <Navbar backgroundColor="#FFFFFF" collapse={collapse} />
+      )}
 
-      {!isSmallScreen && <Navbar
-        backgroundColor="#FFFFFF"
-        collapse={collapse}
-      />}
-      
       {/* <Header /> */}
       <Sidebar
+        user={user}
         collapse={collapse}
         handleCollapse={handleCollapse}
         handleDrawerToggle={handleDrawerToggle}
@@ -62,11 +57,10 @@ const DashboardLayout = () => {
         primaryColor={theme.palette.primary.main}
         secondaryColor={theme.palette.secondary.main}
         selectedBackgroundColor={theme.palette.primary.main}
-        textColor={theme.palette.primary.main}       
+        textColor={theme.palette.primary.main}
         textOneColor={theme.palette.primary.main}
-
         iconColor="#fff"
-      />      
+      />
 
       {/* Main Content */}
       <Box
@@ -82,7 +76,7 @@ const DashboardLayout = () => {
         <Outlet />
       </Box>
 
-      {isSmallScreen && <BottomBar navItems={navItems} />}
+      {isSmallScreen && <BottomBar navItems={menu} />}
     </Box>
   );
 };

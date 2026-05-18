@@ -124,7 +124,7 @@ export default function AppointmentList() {
     try {
       setUpdateLoading(true);
 
-      await dispatch(
+      let response = await dispatch(
         updateAppointmentStatus({
           appointmentId: updateDialog.appointment._id,
           status,
