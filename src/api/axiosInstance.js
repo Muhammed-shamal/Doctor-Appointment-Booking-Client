@@ -39,7 +39,7 @@ axiosInstance.interceptors.request.use(
         token = await authService.refreshToken();
       } catch (error) {
         // Redirect to login if refresh fails
-        // window.location.href = '/login';
+        window.location.href = '/login';
         return Promise.reject(error);
       }
     }
@@ -75,8 +75,7 @@ axiosInstance.interceptors.response.use(
 
         // Prevent infinite redirect loop
         if (!window.location.pathname.includes("/login")) {
-          // window.location.href = '/login';
-          console.log("failed to refrsh and redirecting");
+          window.location.href = '/login';
         }
         return Promise.reject(refreshError);
       }

@@ -5,6 +5,7 @@ import {
   refreshTokenOnLoad,
   registerUser,
   resetPassword,
+  logoutUser,
 } from "./authThunks";
 import authService from "../../api/auth";
 import { LoacalVariables, setLocalValues } from "../../common/commonFunction";
@@ -22,16 +23,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // LOGOUT
-    logout: (state) => {
-      state.user = null;
-      state.accessToken = null;
-
-      authService.clearAuth();
-      localStorage.clear();
-      sessionStorage.clear();
-    },
-
     clearAuthError: (state) => {
       state.error = null;
     },
@@ -112,7 +103,8 @@ const authSlice = createSlice({
 
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = action.payload.message || "Password reset link sent to email";
+        state.success =
+          action.payload.message || "Password reset link sent to email";
       })
 
       .addCase(forgotPassword.rejected, (state, action) => {
@@ -128,7 +120,9 @@ const authSlice = createSlice({
 
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = action.payload.message || "Password reset successful! Please login with your new password";
+        state.success =
+          action.payload.message ||
+          "Password reset successful! Please login with your new password";
       })
 
       .addCase(resetPassword.rejected, (state, action) => {
@@ -179,6 +173,21 @@ const authSlice = createSlice({
         if (action.payload !== null) {
           state.error = action.payload;
         }
+      })
+
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message || "Logout Successful";
+      })
+
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

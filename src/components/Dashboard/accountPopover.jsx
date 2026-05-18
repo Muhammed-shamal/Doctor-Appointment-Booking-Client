@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import Box from "@mui/material/Box";
+import { Menu } from "@mui/material";
 
 import Divider from "@mui/material/Divider";
 import Popover from "@mui/material/Popover";
@@ -9,11 +10,11 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 
 import { account } from "../../_mock/account";
-import { logout } from "../../features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../../context/SnackBar";
 import photo from "../../assets/vite.svg";
-import { Menu } from "@mui/material";
+import { logoutUser } from "../../features/auth/authThunks";
+
 
 export default function AccountPopover() {
   const dispatch = useDispatch();
@@ -26,10 +27,9 @@ export default function AccountPopover() {
     setOpen(event.currentTarget);
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
-      
-      dispatch(logout());
+      dispatch(logoutUser());
     } catch (error) {
       console.error("Logout failed:", error);
       Toast(
@@ -61,11 +61,7 @@ export default function AccountPopover() {
             justifyContent: "center",
           }}
         >
-          <Box
-            width={60}
-            height={40}
-            
-          >
+          <Box width={60} height={40}>
             <Box
               component="img"
               src={photo}
