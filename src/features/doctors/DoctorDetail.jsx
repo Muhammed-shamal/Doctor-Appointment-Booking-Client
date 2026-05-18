@@ -57,6 +57,7 @@ import { bookAppointment } from "../appointments/appointmentThunks";
 import AppointmentBooking from "../../components/Modal/Hospital/AppointmentBooking";
 import { socket } from "../../api/axiosInstance";
 import { can } from "../../utils/permissions";
+import { markSlotAvailable, markSlotBooked } from "../schedules/scheduleSlice";
 
 const DoctorDetail = () => {
   const { id } = useParams();
@@ -91,41 +92,41 @@ const DoctorDetail = () => {
     }
   }, [dispatch, id]);
 
-  // useEffect(() => {
-  //   if (!socket) return;
+  useEffect(() => {
+    if (!socket) return;
 
-  //   socket.on(
-  //     "slotBooked",
+    socket.on(
+      "slotBooked",
 
-  //     ({ scheduleId, slotId }) => {
-  //       dispatch(
-  //         markSlotBooked({
-  //           scheduleId,
-  //           slotId,
-  //         }),
-  //       );
-  //     },
-  //   );
+      ({ scheduleId, slotId }) => {
+        dispatch(
+          markSlotBooked({
+            scheduleId,
+            slotId,
+          }),
+        );
+      },
+    );
 
-  //   socket.on(
-  //     "slotAvailable",
+    socket.on(
+      "slotAvailable",
 
-  //     ({ scheduleId, slotId }) => {
-  //       dispatch(
-  //         markSlotAvailable({
-  //           scheduleId,
-  //           slotId,
-  //         }),
-  //       );
-  //     },
-  //   );
+      ({ scheduleId, slotId }) => {
+        dispatch(
+          markSlotAvailable({
+            scheduleId,
+            slotId,
+          }),
+        );
+      },
+    );
 
-  //   return () => {
-  //     socket.off("slotBooked");
+    return () => {
+      socket.off("slotBooked");
 
-  //     socket.off("slotAvailable");
-  //   };
-  // }, [socket]);
+      socket.off("slotAvailable");
+    };
+  }, [socket]);
 
   useEffect(() => {
     if (bookingSuccess) {

@@ -32,6 +32,62 @@ const scheduleSlice = createSlice({
     resetSchedules: (state) => {
       state.schedules = [];
     },
+
+    markSlotBooked: (state, action) => {
+      const { scheduleId, slotId } = action.payload;
+
+      /*
+      find schedule
+    */
+
+      const schedule = state.schedules.find(
+        (schedule) => schedule._id === scheduleId,
+      );
+
+      if (!schedule) return;
+
+      /*
+      find slot
+    */
+
+      const slot = schedule.slots.find((slot) => slot._id === slotId);
+
+      if (!slot) return;
+
+      /*
+      update slot
+    */
+
+      slot.isBooked = true;
+    },
+
+    markSlotAvailable: (state, action) => {
+      const { scheduleId, slotId } = action.payload;
+
+      /*
+      find schedule
+    */
+
+      const schedule = state.schedules.find(
+        (schedule) => schedule._id === scheduleId,
+      );
+
+      if (!schedule) return;
+
+      /*
+      find slot
+    */
+
+      const slot = schedule.slots.find((slot) => slot._id === slotId);
+
+      if (!slot) return;
+
+      /*
+      update slot
+    */
+
+      slot.isBooked = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -43,7 +99,7 @@ const scheduleSlice = createSlice({
       .addCase(createSchedule.fulfilled, (state, action) => {
         state.loading = false;
         const schedule = action.payload;
-        
+
         if (schedule) state.schedules.push(schedule);
         state.success = action.payload.message || "Schedule created";
       })
@@ -131,6 +187,11 @@ const scheduleSlice = createSlice({
   },
 });
 
-export const { clearScheduleError, clearScheduleSuccess, resetSchedules } =
-  scheduleSlice.actions;
+export const {
+  clearScheduleError,
+  clearScheduleSuccess,
+  resetSchedules,
+  markSlotBooked,
+  markSlotAvailable
+} = scheduleSlice.actions;
 export default scheduleSlice.reducer;

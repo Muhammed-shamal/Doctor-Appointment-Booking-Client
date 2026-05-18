@@ -50,6 +50,23 @@ export const updateAppointmentStatus = createAsyncThunk(
   },
 );
 
+export const cancelAppointment = createAsyncThunk(
+  "appointment/cancelAppointment",
+  async ({ appointmentId, status }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.patch(
+        `/appointments/${appointmentId}/status/cancel`,
+        { status },
+      );
+      return res.data.result;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update appointment status",
+      );
+    }
+  },
+);
+
 export const getAppointmentById = createAsyncThunk(
   "appointment/getAppointmentById",
   async (appointmentId, { rejectWithValue }) => {

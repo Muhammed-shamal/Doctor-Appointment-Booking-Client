@@ -6,12 +6,14 @@ import Header from "../../components/Header";
 import { DeleteConfirmDialog } from "../../components/Modal/MConfirmDiolog";
 import MButton from "../../components/Buttons/MBtn";
 import {
+  cancelAppointment,
   getMyAppointments,
   updateAppointmentStatus,
 } from "./appointmentThunks";
 import { useNavigate } from "react-router-dom";
 import { can } from "../../utils/permissions";
 import { UpdateStatusDialog } from "../../components/Modal/Hospital/UpdateAppointmentStatus";
+import { socket } from "../../api/axiosInstance";
 
 export default function AppointmentList() {
   const dispatch = useDispatch();
@@ -40,6 +42,23 @@ export default function AppointmentList() {
   useEffect(() => {
     dispatch(getMyAppointments());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on(
+      "appointmentUpdated",
+
+      () => {
+        console.log('triggeritn pont')
+        dispatch(getMyAppointments());
+      },
+    );
+
+    return () => {
+      socket.off("appointmentUpdated");
+    };
+  }, [socket, dispatch]);
 
   const handlePageChange = (newPage) => setPage(newPage);
 
@@ -105,7 +124,7 @@ export default function AppointmentList() {
     try {
       setCancelLoading(true);
       await dispatch(
-        updateAppointmentStatus({
+        cancelAppointment({
           appointmentId: cancelDialog.appointment._id,
           status: "cancelled",
         }),

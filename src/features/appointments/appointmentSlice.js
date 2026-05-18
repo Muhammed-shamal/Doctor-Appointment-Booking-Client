@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   bookAppointment,
+  cancelAppointment,
   getAppointmentById,
   getMyAppointments,
   updateAppointmentStatus,
@@ -99,6 +100,26 @@ const appointmentSlice = createSlice({
         state.success = action.payload?.message || "Appointment status updated";
       })
       .addCase(updateAppointmentStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(cancelAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancelAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        const updated = action.payload;
+        if (updated) {
+          const idx = state.appointments.findIndex(
+            (a) => a._id === updated._id,
+          );
+          if (idx !== -1) state.appointments[idx] = updated;
+        }
+        state.success = action.payload?.message || "Appointment canceld ";
+      })
+      .addCase(cancelAppointment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
