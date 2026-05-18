@@ -6,26 +6,23 @@ import MDataTable from "../../components/DataGrid/MDataTable";
 import { DeleteConfirmDialog } from "../../components/Modal/MConfirmDiolog";
 import Header from "../../components/Header";
 import MButton from "../../components/Buttons/MBtn";
-import { getDoctors, deleteDoctor } from "./doctorThunks";
 import { useDebounce } from "../../hooks/useDebounce";
-import { specializationOptions } from ".";
-import { can } from "../../utils/permissions";
+import { getPatients } from "./patientThunk";
 
-export default function DoctorList() {
+export default function PatientList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
 
   // Redux state
-  const { user } = useSelector((state) => state.auth);
-  const doctorState = useSelector((state) => state.doctor || {});
+  const patientState = useSelector((state) => state.patient || {});
   const {
-    doctors = [],
+    patients = [],
     loading,
     currentPage = 1,
     limit = 10,
-    totalDoctors = 0,
-  } = doctorState;
+    totalPatients = 0,
+  } = patientState;
 
   // Local state
   const [page, setPage] = useState(currentPage);
@@ -38,21 +35,15 @@ export default function DoctorList() {
   const [maxFee, setMaxFee] = useState("");
   const [minExperience, setMinExperience] = useState("");
 
-  const [deleteDialog, setDeleteDialog] = useState({
-    open: false,
-    doctor: null,
-  });
-  const [deleteLoading, setDeleteLoading] = useState(false);
-
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const debouncedMinFee = useDebounce(minFee, 500);
   const debouncedMaxFee = useDebounce(maxFee, 500);
   const debouncedMinExperience = useDebounce(minExperience, 500);
 
-  // Fetch doctors when page, filters, or search changes
+  // Fetch Patients when page, filters, or search changes
   useEffect(() => {
     dispatch(
-      getDoctors({
+      getPatients({
         page,
         limit: rowsPerPage,
         search: debouncedSearchTerm,
@@ -136,43 +127,14 @@ export default function DoctorList() {
   );
 
   // Table actions - Update and Delete
-  const actions = [
-    can(user.role, "doctors", "view") && {
-      label: "View",
-      handler: (doctor) => {
-        navigate(`/doctor/detail/${doctor._id}`);
-      },
-    },
-
-    can(user.role, "doctors", "edit") && {
-      label: "Edit",
-      handler: (doctor) => {
-        navigate(`/doctors/${doctor._id}`);
-      },
-    },
-
-    can(user.role, "doctors", "delete") && {
-      label: "Delete",
-      handler: (doctor) => {
-        setDeleteDialog({ open: true, doctor });
-      },
-    },
-  ].filter(Boolean);
-
-  // Handle delete confirmation
-  const handleDeleteConfirm = async () => {
-    if (!deleteDialog.doctor) return;
-
-    try {
-      setDeleteLoading(true);
-      await dispatch(deleteDoctor(deleteDialog.doctor._id)).unwrap();
-      setDeleteDialog({ open: false, doctor: null });
-    } catch (err) {
-      console.error("Delete failed:", err);
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
+  //   const actions = [
+  //     {
+  //       label: "View",
+  //       handler: (patient) => {
+  //         navigate(`/patient/detail/${patient._id}`);
+  //       },
+  //     },
+  //   ];
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -221,39 +183,20 @@ export default function DoctorList() {
     ],
   };
 
-  const totalPages = Math.ceil(totalDoctors / rowsPerPage);
+  const totalPages = Math.ceil(totalPatients / rowsPerPage);
 
   return (
     <>
       {/* Header with title and add button */}
       <Header
-        title="Doctors Management"
-        subtitle="Manage all doctors in the system"
-        action={
-          can(user.role, "doctors", "create") && (
-            <MButton
-              label="Add New Doctor"
-              onClick={() => navigate("/doctors/new")}
-              sx={{
-                backgroundColor: theme.palette.background.default,
-                color: theme.palette.text.primary,
-                fontWeight: 600,
-                fontSize: "0.79rem",
-                px: 3,
-                py: 1,
-                "&:hover": {
-                  backgroundColor: theme.palette.background.paper,
-                },
-              }}
-            />
-          )
-        }
+        title="Patients List"
+        subtitle="You can see all the patients in the system"
       />
 
       {/* Data Table */}
       <Box sx={{ mt: 3 }}>
         <MDataTable
-          data={doctors}
+          data={patients}
           loading={loading}
           columns={columns}
           actions={actions}
@@ -265,24 +208,10 @@ export default function DoctorList() {
           search={searchConfig}
           filters={filterConfig}
           sort={sortConfig}
-          title="Doctors List"
-          // getLink={(doctor) => `/doctors/${doctor._id}`}
+          title="Patient List"
           exportToExcel={true}
         />
       </Box>
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteConfirmDialog
-        open={deleteDialog.open}
-        onClose={() => setDeleteDialog({ open: false, doctor: null })}
-        onConfirm={handleDeleteConfirm}
-        title="Delete Doctor"
-        question={
-          "Are you sure you want to delete data? This action cannot be undone."
-        }
-        loading={deleteLoading}
-        confirmAsync={true}
-      />
     </>
   );
 }

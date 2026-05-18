@@ -2,6 +2,7 @@ import {
   BookOnlineOutlined,
   Home,
   LocalHospital,
+  PeopleAltOutlined,
   Timeline,
 } from "@mui/icons-material";
 
@@ -31,12 +32,12 @@ export const getMenu = (userType) => {
               path: "/schedules/list",
             },
 
-            // {
-            //   id: 4,
-            //   label: "Appointments",
-            //   icon: BookOnlineOutlined,
-            //   path: "/appointments/list",
-            // },
+            {
+              id: 4,
+              label: "Patients",
+              icon: PeopleAltOutlined,
+              path: "/patients/list",
+            },
           ]
         : [
             {

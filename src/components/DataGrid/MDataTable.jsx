@@ -532,7 +532,7 @@ const MDataTable = ({
               onChange={(e) => filters.onChange(e.target.value)}
               displayEmpty
             >
-              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="">All</MenuItem>
               {filters.options.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}

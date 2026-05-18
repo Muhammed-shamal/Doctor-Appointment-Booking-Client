@@ -20,6 +20,7 @@ import ResetPassword from "./features/auth/resetPassword";
 import DoctorDetail from "./features/doctors/DoctorDetail";
 import MLoadingOverlay from "./components/Loader/MLoader";
 import AppointmentDetail from "./features/appointments/AppointmentDetail";
+import PatientList from "./features/patients/PatientList";
 
 function App() {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ function App() {
 
         <Route element={<PrivateRoute token={accessToken} />}>
           <Route element={<DashboardLayout />}>
+            {/* dashboard  */}
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
 
@@ -71,19 +73,22 @@ function App() {
             <Route path="doctors/:id" element={<DoctorForm />} />
             <Route path="doctor/detail/:id" element={<DoctorDetail />} />
 
-            {/* <Route path="doctors/list" element={<DoctorList />} /> */}
+            {/* schedules  */}
             <Route path="schedules/list" element={<ScheduleList />} />
             <Route path="schedules/new" element={<ScheduleForm />} />
             <Route path="schedules/:id" element={<ScheduleForm />} />
 
+            {/* appointments  */}
             <Route path="appointments/list" element={<AppointmentList />} />
             {/* <Route
               path="appointment/detail/:id"
               element={<AppointmentDetail />}
             /> */}
-            {/* <Route path="schedules/new" element={<ScheduleForm />} /> */}
-            {/* <Route path="schedules/:id" element={<ScheduleForm />} /> */}
 
+            {/* patients  */}
+            <Route path="patients/list" element={<PatientList />} />
+
+            {/* not found  */}
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
