@@ -31,6 +31,15 @@ import {
   useTheme,
   Divider,
 } from "@mui/material";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { fetchDashboardData } from "./dashboardThunk";
@@ -80,6 +89,27 @@ const Dashboard = () => {
   }
 
   const isAdmin = user?.role === "admin";
+
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const chartData =
+    data?.appointmentTrends?.map((item) => ({
+      month: monthNames[item._id.month - 1],
+      count: item.count,
+    })) || [];
 
   return (
     <Box sx={{ mb: 3 }}>
@@ -273,66 +303,62 @@ const Dashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.recentAppointments.map((apt, idx) => (
-                  <TableRow
-                    key={idx}
-                    hover
-                    sx={{
-                      "&:hover": { bgcolor: "#f9f9f9" },
-                      transition: "background-color 0.2s",
-                    }}
-                  >
-                    {isAdmin && (
-                      <TableCell
-                        sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
-                      >
-                        {apt.patient?.name || "N/A"}
-                      </TableCell>
-                    )}
-                    {isAdmin ? (
-                      <TableCell
-                        sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
-                      >
-                        {apt?.doctor
-                          ? `Dr. ${apt.doctor.fname} ${apt.doctor.lname}`
-                          : "N/A"}
-                      </TableCell>
-                    ) : (
-                      <TableCell
-                        sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
-                      >
-                        {apt?.doctor
-                          ? `Dr. ${apt.doctor.fname} ${apt.doctor.lname}`
-                          : "N/A"}
-                      </TableCell>
-                    )}
-                    <TableCell
-                      sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
+                {data.recentAppointments.map((apt, idx) => {
+                  const doctor = apt.doctor || {};
+                  const patient = apt.patient || {};
+
+                  const doctorName =
+                    doctor.fname || doctor.lname
+                      ? `Dr. ${doctor.fname || ""} ${doctor.lname || ""}`.trim()
+                      : "N/A";
+
+                  return (
+                    <TableRow
+                      key={idx}
+                      hover
+                      sx={{
+                        "&:hover": { bgcolor: "#f9f9f9" },
+                        transition: "background-color 0.2s",
+                      }}
                     >
-                      {formatDate(apt.appointmentDate)}
-                    </TableCell>
-                    {/* <TableCell
-                      sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
-                    >
-                      {formatTime(apt.appointmentTime)}
-                    </TableCell> */}
-                    <TableCell>
-                      <Chip
-                        label={apt.status || "Pending"}
-                        color={
-                          apt.status === "completed"
-                            ? "success"
-                            : apt.status === "cancelled"
-                              ? "error"
-                              : "warning"
-                        }
-                        variant="outlined"
-                        size={isMobile ? "small" : "medium"}
-                        sx={{ fontWeight: 500 }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      {isAdmin && (
+                        <TableCell
+                          sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
+                        >
+                          {patient.name || "N/A"}
+                        </TableCell>
+                      )}
+
+                      <TableCell
+                        sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
+                      >
+                        {doctorName}
+                      </TableCell>
+
+                      <TableCell
+                        sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
+                      >
+                        {formatDate(apt.appointmentDate)}
+                      </TableCell>
+
+                      <TableCell>
+                        <Chip
+                          label={apt.status || "Pending"}
+                          color={
+                            apt.status === "completed"
+                              ? "success"
+                              : apt.status === "cancelled"
+                                ? "error"
+                                : "warning"
+                          }
+                          variant="outlined"
+                          size={isMobile ? "small" : "medium"}
+                          sx={{ fontWeight: 500 }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -526,44 +552,43 @@ const Dashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.topDoctors.map((doctor, idx) => (
-                  <TableRow
-                    key={idx}
-                    hover
-                    sx={{
-                      "&:hover": { bgcolor: "#f9f9f9" },
-                      transition: "background-color 0.2s",
-                    }}
-                  >
-                    <TableCell
-                      sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
+                {data.topDoctors.map((item, idx) => {
+                  const doctor = item.doctor || {};
+
+                  return (
+                    <TableRow
+                      key={idx}
+                      hover
+                      sx={{
+                        "&:hover": { bgcolor: "#f9f9f9" },
+                        transition: "background-color 0.2s",
+                      }}
                     >
-                      {doctor.name || "N/A"}
-                    </TableCell>
-                    <TableCell
-                      sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
-                    >
-                      {doctor.specialization || "N/A"}
-                    </TableCell>
-                    <TableCell
-                      sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
-                    >
-                      {doctor.appointmentCount || 0}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={
-                          doctor.rating
-                            ? `${doctor.rating.toFixed(1)} ⭐`
-                            : "N/A"
-                        }
-                        variant="outlined"
-                        size={isMobile ? "small" : "medium"}
-                        sx={{ fontWeight: 500 }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell>
+                        {doctor.fname || doctor.lname
+                          ? `Dr. ${doctor.fname || ""} ${doctor.lname || ""}`
+                          : "N/A"}
+                      </TableCell>
+
+                      <TableCell>{doctor.specialization || "N/A"}</TableCell>
+
+                      <TableCell>{item.totalAppointments || 0}</TableCell>
+
+                      <TableCell>
+                        <Chip
+                          label={
+                            typeof item.rating === "number"
+                              ? `${item.rating.toFixed(1)} ⭐`
+                              : "N/A"
+                          }
+                          variant="outlined"
+                          size={isMobile ? "small" : "medium"}
+                          sx={{ fontWeight: 500 }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -571,41 +596,43 @@ const Dashboard = () => {
       )}
 
       {/* Appointment Trends Chart (Admin only) */}
-      {isAdmin &&
-        data.appointmentTrends &&
-        data.appointmentTrends.length > 0 && (
-          <Box sx={{ mb: 6 }}>
-            <Header title="Appointment Trends" />
-            <Card
-              sx={{
-                p: { xs: 2, sm: 3, md: 4 },
-                borderRadius: { xs: 1.5, sm: 2, md: 2.5 },
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                },
-              }}
+      {isAdmin && chartData.length > 0 && (
+        <Box sx={{ mb: 6 }}>
+          <Header title="Appointment Trends" />
+
+          <Card
+            sx={{
+              p: { xs: 2, sm: 3, md: 4 },
+              borderRadius: 2,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            }}
+          >
+            <Box sx={{ width: "100%", height: 300 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+
+                  <XAxis dataKey="month" />
+
+                  <YAxis allowDecimals={false} />
+
+                  <Tooltip />
+
+                  <Bar dataKey="count" fill="#1976d2" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mt: 1, display: "block" }}
             >
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                mb={2}
-                sx={{ fontSize: { xs: "0.85rem", sm: "0.95rem" } }}
-              >
-                Trend data: {JSON.stringify(data.appointmentTrends)}
-              </Typography>
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                sx={{ fontSize: { xs: "0.75rem", sm: "0.85rem" } }}
-              >
-                📊 Chart visualization can be added with charting libraries like
-                Recharts or Chart.js
-              </Typography>
-            </Card>
-          </Box>
-        )}
+              📊 Monthly appointment trends
+            </Typography>
+          </Card>
+        </Box>
+      )}
     </Box>
   );
 };

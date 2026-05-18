@@ -736,7 +736,6 @@ const MDataTable = ({
       sx={{
         overflowX: "auto",
         width: "100%",
-        position: "relative",
       }}
     >
       <Table
@@ -1037,10 +1036,25 @@ const MDataTable = ({
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
           PaperProps={{
             sx: {
               minWidth: 150,
               boxShadow: theme.shadows[3],
+            },
+          }}
+          slotProps={{
+            paper: {
+              sx: {
+                zIndex: 1300,
+              },
             },
           }}
         >
