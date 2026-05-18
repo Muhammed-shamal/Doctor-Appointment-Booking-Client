@@ -41,6 +41,13 @@ export const ROLE_PERMISSIONS = {
       view: true,
       create: true,
       edit: false,
+      delete: true, //cancel
+    },
+
+    schedules: {
+      view: true,
+      create: false,
+      edit: false,
       delete: false,
     },
   },

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getPatients } from "./patientThunk";
 
 const initialState = {
-  totalPatients: [],
+  patients: [],
   totalPatients: 0,
   currentPage: 1,
   limit: 10,

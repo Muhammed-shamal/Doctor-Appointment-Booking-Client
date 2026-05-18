@@ -9,6 +9,7 @@ export const getPatients = createAsyncThunk(
       const response = await axiosInstance.get("/patients", {
         params,
       });
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(

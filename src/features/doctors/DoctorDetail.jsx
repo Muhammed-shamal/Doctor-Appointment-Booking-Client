@@ -55,6 +55,8 @@ import MBackButton from "../../components/Buttons/MBackButton";
 import MButton from "../../components/Buttons/MBtn";
 import { bookAppointment } from "../appointments/appointmentThunks";
 import AppointmentBooking from "../../components/Modal/Hospital/AppointmentBooking";
+import { socket } from "../../api/axiosInstance";
+import { can } from "../../utils/permissions";
 
 const DoctorDetail = () => {
   const { id } = useParams();
@@ -62,6 +64,7 @@ const DoctorDetail = () => {
   const navigate = useNavigate();
   const theme = useTheme();
 
+  const { user } = useSelector((state) => state.auth);
   const doctorState = useSelector((state) => state.doctor);
   const doctor = doctorState.selectedDoctor;
   const doctorLoading = doctorState.loading;
@@ -87,6 +90,42 @@ const DoctorDetail = () => {
       dispatch(getDoctorSchedules(id));
     }
   }, [dispatch, id]);
+
+  // useEffect(() => {
+  //   if (!socket) return;
+
+  //   socket.on(
+  //     "slotBooked",
+
+  //     ({ scheduleId, slotId }) => {
+  //       dispatch(
+  //         markSlotBooked({
+  //           scheduleId,
+  //           slotId,
+  //         }),
+  //       );
+  //     },
+  //   );
+
+  //   socket.on(
+  //     "slotAvailable",
+
+  //     ({ scheduleId, slotId }) => {
+  //       dispatch(
+  //         markSlotAvailable({
+  //           scheduleId,
+  //           slotId,
+  //         }),
+  //       );
+  //     },
+  //   );
+
+  //   return () => {
+  //     socket.off("slotBooked");
+
+  //     socket.off("slotAvailable");
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     if (bookingSuccess) {
@@ -136,7 +175,7 @@ const DoctorDetail = () => {
       };
 
       dispatch(bookAppointment(appointmentData)).unwrap();
-      navigate("/appointments/list")
+      navigate("/appointments/list");
     } catch (error) {
       console.error("failed to book an appointment");
     }
@@ -239,11 +278,34 @@ const DoctorDetail = () => {
                 {doctor.fname?.charAt(0)}
                 {doctor.lname?.charAt(0)}
               </Avatar>
-              <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                  <Typography variant="h4" component="h1" fontWeight="700">
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                {/* Doctor Name + Status */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
+                    gap: 1,
+                    mb: 1,
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    fontWeight="700"
+                    sx={{
+                      fontSize: {
+                        xs: "1.5rem",
+                        sm: "2rem",
+                        md: "2.3rem",
+                      },
+                      wordBreak: "break-word",
+                      lineHeight: 1.2,
+                    }}
+                  >
                     Dr. {doctor.fname} {doctor.lname}
                   </Typography>
+
                   {doctor.isActive && (
                     <Tooltip title="Available for consultation">
                       <Chip
@@ -251,20 +313,39 @@ const DoctorDetail = () => {
                         label="Active"
                         size="small"
                         color="success"
-                        sx={{ ml: 2 }}
+                        sx={{
+                          width: "fit-content",
+                          fontWeight: 500,
+                        }}
                       />
                     </Tooltip>
                   )}
                 </Box>
+
+                {/* Specialization */}
                 <Typography
                   variant="h6"
                   color="primary"
                   gutterBottom
                   fontWeight="500"
+                  sx={{
+                    fontSize: {
+                      xs: "1rem",
+                      sm: "1.15rem",
+                      md: "1.25rem",
+                    },
+                  }}
                 >
                   {doctor.specialization}
                 </Typography>
-                <Stack direction="row" spacing={1} alignItems="center">
+
+                {/* Rating */}
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  alignItems="center"
+                  flexWrap="wrap"
+                >
                   <Rating
                     value={4.5}
                     precision={0.5}
@@ -272,7 +353,17 @@ const DoctorDetail = () => {
                     size="small"
                     icon={<StarIcon fontSize="inherit" />}
                   />
-                  <Typography variant="body2" color="text.secondary">
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      fontSize: {
+                        xs: "0.8rem",
+                        sm: "0.9rem",
+                      },
+                    }}
+                  >
                     (128 reviews)
                   </Typography>
                 </Stack>
@@ -444,13 +535,15 @@ const DoctorDetail = () => {
 
               {/* Buttons */}
               <Stack spacing={2}>
-                <MButton
-                  fullWidth
-                  variant="contained"
-                  size="small"
-                  onClick={handleBookAppointment}
-                  label="Book Appointment"
-                />
+                {can(user.role, "appointments", "create") && (
+                  <MButton
+                    fullWidth
+                    variant="contained"
+                    size="small"
+                    onClick={handleBookAppointment}
+                    label="Book Appointment"
+                  />
+                )}
 
                 <Button
                   fullWidth
@@ -465,6 +558,7 @@ const DoctorDetail = () => {
             </Paper>
           </Grid>
         </Grid>
+
         {/* Booking Modal */}
         <AppointmentBooking
           availableDates={availableDates}

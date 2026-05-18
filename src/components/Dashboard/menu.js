@@ -34,6 +34,13 @@ export const getMenu = (userType) => {
 
             {
               id: 4,
+              label: "Appointments",
+              icon: BookOnlineOutlined,
+              path: "/appointments/list",
+            },
+
+            {
+              id: 5,
               label: "Patients",
               icon: PeopleAltOutlined,
               path: "/patients/list",

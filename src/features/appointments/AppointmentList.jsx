@@ -10,12 +10,15 @@ import {
   updateAppointmentStatus,
 } from "./appointmentThunks";
 import { useNavigate } from "react-router-dom";
+import { can } from "../../utils/permissions";
+import { UpdateStatusDialog } from "../../components/Modal/Hospital/UpdateAppointmentStatus";
 
 export default function AppointmentList() {
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
 
+  const { user } = useSelector((state) => state.auth);
   const appointmentState = useSelector((state) => state.appointment);
   const { appointments, loading } = appointmentState;
 
@@ -27,6 +30,12 @@ export default function AppointmentList() {
     appointment: null,
   });
   const [cancelLoading, setCancelLoading] = useState(false);
+
+  const [updateDialog, setUpdateDialog] = useState({
+    open: false,
+    appointment: null,
+  });
+  const [updateLoading, setUpdateLoading] = useState(false);
 
   useEffect(() => {
     dispatch(getMyAppointments());
@@ -76,12 +85,13 @@ export default function AppointmentList() {
   );
 
   const actions = [
-    // {
-    //   label: "View",
-    //   handler: (appointment) => {
-    //     navigate(`/appointment/detail/${appointment._id}`);
-    //   },
-    // },
+    can(user.role, "appointments", "edit") && {
+      label: "Update Status",
+      handler: (appointment) => {
+        setUpdateDialog({ open: true, appointment });
+      },
+    },
+
     {
       label: "Cancel",
       handler: (appointment) => setCancelDialog({ open: true, appointment }),
@@ -105,6 +115,30 @@ export default function AppointmentList() {
       console.error("Failed to cancel appointment", err);
     } finally {
       setCancelLoading(false);
+    }
+  };
+
+  const handleUpdateConfirm = async (status) => {
+    if (!updateDialog.appointment) return;
+
+    try {
+      setUpdateLoading(true);
+
+      await dispatch(
+        updateAppointmentStatus({
+          appointmentId: updateDialog.appointment._id,
+          status,
+        }),
+      ).unwrap();
+
+      setUpdateDialog({
+        open: false,
+        appointment: null,
+      });
+    } catch (err) {
+      console.error("Failed to update appointment", err);
+    } finally {
+      setUpdateLoading(false);
     }
   };
 
@@ -159,6 +193,19 @@ export default function AppointmentList() {
         question={"Are you sure you want to cancel this appointment?"}
         loading={cancelLoading}
         confirmAsync={true}
+      />
+
+      <UpdateStatusDialog
+        open={updateDialog.open}
+        onClose={() =>
+          setUpdateDialog({
+            open: false,
+            appointment: null,
+          })
+        }
+        onConfirm={handleUpdateConfirm}
+        loading={updateLoading}
+        appointment={updateDialog.appointment}
       />
     </>
   );

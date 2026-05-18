@@ -15,14 +15,8 @@ export default function PatientList() {
   const theme = useTheme();
 
   // Redux state
-  const patientState = useSelector((state) => state.patient || {});
-  const {
-    patients = [],
-    loading,
-    currentPage = 1,
-    limit = 10,
-    totalPatients = 0,
-  } = patientState;
+  const patientState = useSelector((state) => state.patient);
+  const { patients, loading, currentPage, limit, totalPatients } = patientState;
 
   // Local state
   const [page, setPage] = useState(currentPage);
@@ -31,14 +25,7 @@ export default function PatientList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const [minFee, setMinFee] = useState("");
-  const [maxFee, setMaxFee] = useState("");
-  const [minExperience, setMinExperience] = useState("");
-
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const debouncedMinFee = useDebounce(minFee, 500);
-  const debouncedMaxFee = useDebounce(maxFee, 500);
-  const debouncedMinExperience = useDebounce(minExperience, 500);
 
   // Fetch Patients when page, filters, or search changes
   useEffect(() => {
@@ -47,80 +34,32 @@ export default function PatientList() {
         page,
         limit: rowsPerPage,
         search: debouncedSearchTerm,
-        specialization: filterValue || undefined,
-        minFee: debouncedMinFee || undefined,
-        maxFee: debouncedMaxFee || undefined,
-        minExperience: debouncedMinExperience || undefined,
       }),
     );
-  }, [
-    page,
-    rowsPerPage,
-    debouncedSearchTerm,
-    filterValue,
-    debouncedMinFee,
-    debouncedMaxFee,
-    debouncedMinExperience,
-    dispatch,
-  ]);
+  }, [page, rowsPerPage, debouncedSearchTerm, filterValue, dispatch]);
 
   // Reset to first page when search or filter changes (only when debounced values change)
   useEffect(() => {
     setPage(1);
-  }, [
-    debouncedSearchTerm,
-    filterValue,
-    debouncedMinFee,
-    debouncedMaxFee,
-    debouncedMinExperience,
-  ]);
+  }, [debouncedSearchTerm, filterValue]);
 
   // Table columns configuration
   const columns = useMemo(
     () => [
       {
         label: "Name",
-        field: "fname",
+        field: "name",
         sortable: true,
-        render: (row) => `${row.fname} ${row.lname}`,
       },
-      // {
-      //   label: "Email",
-      //   field: "email",
-      //   sortable: true,
-      // },
+      {
+        label: "Email",
+        field: "email",
+        sortable: true,
+      },
       {
         label: "Phone",
         field: "phone",
         sortable: true,
-      },
-      {
-        label: "Specialization",
-        field: "specialization",
-        sortable: true,
-      },
-      {
-        label: "Experience",
-        field: "experience",
-        sortable: true,
-        type: "number",
-      },
-      {
-        label: "Consultation Fee",
-        field: "consultationFee",
-        sortable: true,
-        type: "number",
-      },
-      {
-        label: "Clinic Name",
-        field: "clinic_name",
-        sortable: true,
-      },
-      {
-        label: "Status",
-        field: "isActive",
-        sortable: true,
-        type: "boolean",
       },
     ],
     [],
@@ -150,7 +89,7 @@ export default function PatientList() {
   };
 
   const searchConfig = {
-    placeholder: "Search by name, email, or specialization...",
+    placeholder: "Search by name, email, or phone...",
     value: searchTerm,
     onChange: handleSearchChange,
   };
@@ -158,16 +97,7 @@ export default function PatientList() {
   const filterConfig = {
     value: filterValue,
     onChange: setFilterValue,
-    options: specializationOptions,
-
-    customNumericFilters: {
-      minFee,
-      maxFee,
-      minExperience,
-      onMinFeeChange: setMinFee,
-      onMaxFeeChange: setMaxFee,
-      onMinExperienceChange: setMinExperience,
-    },
+    options: [{ label: "", value: "" }],
   };
 
   // Sort configuration
@@ -199,14 +129,14 @@ export default function PatientList() {
           data={patients}
           loading={loading}
           columns={columns}
-          actions={actions}
+          // actions={actions}
           page={page}
           onPageChange={handlePageChange}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           totalPages={totalPages}
           search={searchConfig}
-          filters={filterConfig}
+          // filters={filterConfig}
           sort={sortConfig}
           title="Patient List"
           exportToExcel={true}

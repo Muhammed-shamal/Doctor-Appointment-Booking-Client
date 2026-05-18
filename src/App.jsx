@@ -21,6 +21,8 @@ import DoctorDetail from "./features/doctors/DoctorDetail";
 import MLoadingOverlay from "./components/Loader/MLoader";
 import AppointmentDetail from "./features/appointments/AppointmentDetail";
 import PatientList from "./features/patients/PatientList";
+import RoleGuard from "./components/RoleGuard";
+import { can } from "./utils/permissions";
 
 function App() {
   const dispatch = useDispatch();
@@ -69,14 +71,42 @@ function App() {
 
             {/* Doctor Routes */}
             <Route path="doctors/list" element={<DoctorList />} />
-            <Route path="doctors/new" element={<DoctorForm />} />
-            <Route path="doctors/:id" element={<DoctorForm />} />
+            <Route
+              path="/doctors/new"
+              element={
+                <RoleGuard allowed={can(user?.role, "doctors", "create")}>
+                  <DoctorForm />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="doctors/:id"
+              element={
+                <RoleGuard allowed={can(user?.role, "doctors", "update")}>
+                  <DoctorForm />
+                </RoleGuard>
+              }
+            />
             <Route path="doctor/detail/:id" element={<DoctorDetail />} />
 
             {/* schedules  */}
             <Route path="schedules/list" element={<ScheduleList />} />
-            <Route path="schedules/new" element={<ScheduleForm />} />
-            <Route path="schedules/:id" element={<ScheduleForm />} />
+            <Route
+              path="schedules/new"
+              element={
+                <RoleGuard allowed={can(user?.role, "schedules", "create")}>
+                  <ScheduleForm />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="schedules/:id"
+              element={
+                <RoleGuard allowed={can(user?.role, "schedules", "update")}>
+                  <ScheduleForm />
+                </RoleGuard>
+              }
+            />
 
             {/* appointments  */}
             <Route path="appointments/list" element={<AppointmentList />} />
