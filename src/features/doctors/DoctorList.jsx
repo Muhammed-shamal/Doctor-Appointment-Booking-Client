@@ -43,6 +43,9 @@ export default function DoctorList() {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedMinFee = useDebounce(minFee, 500);
+  const debouncedMaxFee = useDebounce(maxFee, 500);
+  const debouncedMinExperience = useDebounce(minExperience, 500);
 
   // Fetch doctors when page or rowsPerPage changes
   useEffect(() => {
@@ -52,9 +55,9 @@ export default function DoctorList() {
         limit: rowsPerPage,
         search: debouncedSearchTerm,
         specialization: filterValue || undefined,
-        minFee: minFee || undefined,
-        maxFee: maxFee || undefined,
-        minExperience: minExperience || undefined,
+        minFee: debouncedMinFee || undefined,
+        maxFee: debouncedMaxFee || undefined,
+        minExperience: debouncedMinExperience || undefined,
       }),
     );
   }, [
@@ -62,18 +65,18 @@ export default function DoctorList() {
     rowsPerPage,
     debouncedSearchTerm,
     filterValue,
-    minFee,
-    maxFee,
-    minExperience,
+    debouncedMinFee,
+    debouncedMaxFee,
+    debouncedMinExperience,
     dispatch,
   ]);
 
-  // Reset to first page when search or filter changes
+  // Reset to first page when search or filter changes (only when debounced values change)
   useEffect(() => {
     if (page !== 1) {
       setPage(1);
     }
-  }, [debouncedSearchTerm, filterValue]);
+  }, [debouncedSearchTerm, filterValue, debouncedMinFee, debouncedMaxFee, debouncedMinExperience]);
 
   // Table columns configuration
   const columns = useMemo(
@@ -174,7 +177,6 @@ export default function DoctorList() {
       typeof value === "string" ? value : value?.target?.value || "";
 
     setSearchTerm(searchValue);
-    setPage(1);
   };
 
   const searchConfig = {

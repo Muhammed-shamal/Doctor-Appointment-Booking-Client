@@ -1,11 +1,13 @@
 //development
 const BASE_URL = 'http://localhost:5000/api';
+const SOCKET_URL = 'http://localhost:5000';
 
 // production
 // const BASE_URL = 'https://curiousapi.reobeen.com/';
 
 export const API_URL = {
-  BASE_URL
+  BASE_URL,
+  SOCKET_URL
 };
 
 export const colors = {

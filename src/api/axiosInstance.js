@@ -13,6 +13,13 @@ export const refreshInstance = axios.create({
   withCredentials: true,
 });
 
+export const socket = io(API_URL.SOCKET_URL, {
+  autoConnect: false,
+  withCredentials: true, // send cookies automatically
+  reconnectionAttempts: 5,
+  reconnectionDelay: 5000,
+});
+
 // Request interceptor
 axiosInstance.interceptors.request.use(async (config) => {
   // Skip auth header for refresh endpoint
