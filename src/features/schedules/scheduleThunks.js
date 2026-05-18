@@ -38,7 +38,7 @@ export const getDoctorSchedules = createAsyncThunk(
   async (doctorId, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get(`/schedules/doctor/${doctorId}`);
-      console.log("doctor schedules", res.data);
+      
       return res.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -53,7 +53,7 @@ export const getScheduleById = createAsyncThunk(
   async (scheduleId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`schedules/${scheduleId}`);
-      console.log("response selectedSchedule", response);
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(

@@ -65,7 +65,7 @@ const Login = () => {
   };
 
   const handleForgotPasswordSubmit = async (email) => {
-    console.log("Password reset requested for:", email);
+    
     try {
       const response = await dispatch(forgotPassword(email)).unwrap();
       navigate("/login");

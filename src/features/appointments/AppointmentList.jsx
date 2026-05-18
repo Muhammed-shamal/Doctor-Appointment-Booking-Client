@@ -50,7 +50,7 @@ export default function AppointmentList() {
       "appointmentUpdated",
 
       () => {
-        console.log('triggeritn pont')
+        
         dispatch(getMyAppointments());
       },
     );

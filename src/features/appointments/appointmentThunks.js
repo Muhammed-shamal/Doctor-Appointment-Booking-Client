@@ -23,7 +23,7 @@ export const getMyAppointments = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get("/appointments");
-      console.log("res is my appointments", res);
+      
       return res.data.result;
     } catch (error) {
       return rejectWithValue(

@@ -9,7 +9,7 @@ export const getDoctors = createAsyncThunk(
       const response = await axiosInstance.get('/doctors', {
         params,
       });
-      console.log('doctors are',response);
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -26,7 +26,7 @@ export const getDoctorById = createAsyncThunk(
       const response = await axiosInstance.get(
         `doctors/${doctorId}`
       );
-      console.log('get by id',response.data);
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -44,7 +44,7 @@ export const createDoctor = createAsyncThunk(
         '/doctors',
         doctorData
       );
-      console.log('doctor create respo',response)
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -62,7 +62,7 @@ export const updateDoctor = createAsyncThunk(
         `/doctors/${doctorId}`,
         doctorData
       );
-      console.log('doctor update respo',response)
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(
@@ -79,7 +79,7 @@ export const deleteDoctor = createAsyncThunk(
       const response = await axiosInstance.delete(
         `/doctors/${doctorId}`
       );
-      console.log('doctor delete respo',response)
+      
       return response.data.result;
     } catch (error) {
       return rejectWithValue(

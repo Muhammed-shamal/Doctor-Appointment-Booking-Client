@@ -60,7 +60,7 @@ const Dashboard = () => {
     (state) => state.dashboard,
   );
 
-  console.log("data is dashboard", data);
+
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {

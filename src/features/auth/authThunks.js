@@ -12,7 +12,7 @@ export const registerUser = createAsyncThunk(
         `${API_URL.BASE_URL}/auth/register`,
         credentials,
       );
-      console.log("response from register", response);
+      
       return response.data;
     } catch (error) {
       console.error("Register error:", error.response?.data);
@@ -31,7 +31,7 @@ export const loginUser = createAsyncThunk(
         `${API_URL.BASE_URL}/auth/login`,
         credentials,
       );
-      console.log("login res", response);
+      
       authService.setAccessToken(response.data.result.accessToken);
       return response.data.result;
     } catch (error) {
@@ -52,7 +52,7 @@ export const forgotPassword = createAsyncThunk(
         { email },
       );
 
-      console.log("response forgot", response);
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -66,7 +66,7 @@ export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ password, token }, { rejectWithValue }) => {
     try {
-      console.log("try to reset pass", password);
+      
       const response = await axios.post(
         `${API_URL.BASE_URL}/auth/reset-password/${token}`,
         {
@@ -74,7 +74,7 @@ export const resetPassword = createAsyncThunk(
         },
       );
 
-      console.log("response reset pas", response);
+      
       return response.data;
     } catch (error) {
       console.error("erset err", error);

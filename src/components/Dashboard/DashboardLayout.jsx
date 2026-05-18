@@ -33,7 +33,7 @@ const DashboardLayout = () => {
     setCollapse(!collapse);
   };
 
-  console.log("user is", user);
+  
   const menu = getMenu(user?.role);
 
   return (

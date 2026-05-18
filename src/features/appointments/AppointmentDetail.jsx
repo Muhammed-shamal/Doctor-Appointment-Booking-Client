@@ -99,7 +99,6 @@ const AppointmentDetail = () => {
 
   const handleDownloadReceipt = () => {
     // Implement receipt download functionality
-    console.log("Download receipt");
   };
 
   const handlePrint = () => {
