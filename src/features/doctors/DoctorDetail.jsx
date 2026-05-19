@@ -176,7 +176,8 @@ const DoctorDetail = () => {
       };
 
       dispatch(bookAppointment(appointmentData)).unwrap();
-      navigate("/appointments/list");
+      // navigate("/appointments/list");
+      window.location.href = "/appointments/list";
     } catch (error) {
       console.error("failed to book an appointment");
     }

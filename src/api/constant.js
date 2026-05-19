@@ -1,9 +1,7 @@
 //development
-const BASE_URL = 'http://localhost:5000/api';
-const SOCKET_URL = 'http://localhost:5000';
+const BASE_URL = 'https://doctor-booking-server-pf3h.onrender.com/api';
+const SOCKET_URL = 'https://doctor-booking-server-pf3h.onrender.com/';
 
-// production
-// const BASE_URL = 'https://curiousapi.reobeen.com/';
 
 export const API_URL = {
   BASE_URL,

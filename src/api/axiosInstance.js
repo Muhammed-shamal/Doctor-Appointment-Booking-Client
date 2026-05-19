@@ -39,7 +39,7 @@ axiosInstance.interceptors.request.use(
         token = await authService.refreshToken();
       } catch (error) {
         // Redirect to login if refresh fails
-        window.location.href = '/login';
+        window.location.href = "/login";
         return Promise.reject(error);
       }
     }
@@ -71,11 +71,11 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // Refresh failed - redirect to login
-        authService.clearAuth();
+        await authService.clearAuth();
 
         // Prevent infinite redirect loop
         if (!window.location.pathname.includes("/login")) {
-          window.location.href = '/login';
+          window.location.href = "/login";
         }
         return Promise.reject(refreshError);
       }

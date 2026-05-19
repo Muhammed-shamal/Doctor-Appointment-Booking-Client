@@ -17,7 +17,7 @@ import { resetPassword } from "./authThunks";
 import { useDispatch } from "react-redux";
 import MTextField from "../../components/TextBox/MTextField";
 import MButton from "../../components/Buttons/MBtn";
-import authService from '../../api/auth';
+import authService from "../../api/auth";
 
 function ResetPassword() {
   const { token } = useParams();
@@ -68,7 +68,7 @@ function ResetPassword() {
         resetPassword({ password: data.password, token }),
       ).unwrap();
 
-      authService.clearAuth();
+      await authService.clearAuth();
       // Redirect to login page after a short delay
       setTimeout(() => {
         navigate("/login");

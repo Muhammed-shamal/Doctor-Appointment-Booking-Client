@@ -15,7 +15,6 @@ import { useToast } from "../../context/SnackBar";
 import photo from "../../assets/vite.svg";
 import { logoutUser } from "../../features/auth/authThunks";
 
-
 export default function AccountPopover() {
   const dispatch = useDispatch();
   const Toast = useToast();
@@ -27,15 +26,14 @@ export default function AccountPopover() {
     setOpen(event.currentTarget);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      dispatch(logoutUser());
+      await dispatch(logoutUser()).unwrap();
+
+      window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed:", error);
-      Toast(
-        error.response?.data?.message || "Logout failed. Please try again!",
-        "error",
-      );
+
       handleClose();
     }
   };

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { API_URL } from './constant';
-import { refreshInstance } from './axiosInstance';
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { API_URL } from "./constant";
+import { refreshInstance } from "./axiosInstance";
 
 class AuthService {
   constructor() {
@@ -13,7 +13,7 @@ class AuthService {
 
   // Process queue of failed requests while refreshing
   processQueue(error, token = null) {
-    this.failedQueue.forEach(promise => {
+    this.failedQueue.forEach((promise) => {
       if (error) {
         promise.reject(error);
       } else {
@@ -32,17 +32,17 @@ class AuthService {
     }
 
     this.isRefreshing = true;
-    
+
     try {
-      console.log('try to refresh reques')
+      console.log("try to refresh reques");
       // Server reads refresh token from HttpOnly cookie
       const response = await refreshInstance.post("/auth/refresh-token");
 
-      console.log('try to refresh the token',response);
-      
+      console.log("try to refresh the token", response);
+
       const { accessToken } = response.data.result;
       this.setAccessToken(accessToken);
-      
+
       this.processQueue(null, accessToken);
       return accessToken;
     } catch (error) {
@@ -55,31 +55,31 @@ class AuthService {
   }
 
   setAccessToken(token) {
-    console.log('try to settinug token',token)
+    console.log("try to settinug token", token);
     this.accessToken = token;
-    
+
     // Optional: Store temporarily for page refresh (5 min window)
     if (token) {
       const expiryTime = jwtDecode(token).exp * 1000;
-      localStorage.setItem('token_expiry', expiryTime.toString());
-      sessionStorage.setItem('temp_token', token); // Session storage clears on tab close
+      localStorage.setItem("token_expiry", expiryTime.toString());
+      sessionStorage.setItem("temp_token", token); // Session storage clears on tab close
     }
   }
 
   getAccessToken() {
-    console.log('this token',this.accessToken);
+    console.log("this token", this.accessToken);
     // Check if we have a valid token in memory
     if (this.accessToken && !this.isTokenExpired(this.accessToken)) {
       return this.accessToken;
     }
-    
+
     // Try to restore from session storage on page refresh
-    const tempToken = sessionStorage.getItem('temp_token');
+    const tempToken = sessionStorage.getItem("temp_token");
     if (tempToken && !this.isTokenExpired(tempToken)) {
       this.accessToken = tempToken;
       return tempToken;
     }
-    
+
     return null;
   }
 
@@ -92,13 +92,20 @@ class AuthService {
     }
   }
 
-  clearAuth() {
+  async clearAuth() {
     this.accessToken = null;
-    sessionStorage.removeItem('temp_token');
-    localStorage.removeItem('token_expiry');
-    
-    // Call logout API
-    axios.post(`${API_URL.BASE_URL}/auth/logout`, {}, { withCredentials: true });
+
+    sessionStorage.removeItem("temp_token");
+
+    localStorage.removeItem("token_expiry");
+
+    await axios.post(
+      `${API_URL.BASE_URL}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
   }
 }
 
