@@ -26,7 +26,7 @@ import { can } from "./utils/permissions";
 
 function App() {
   const dispatch = useDispatch();
-  const { accessToken, user, loading } = useSelector((state) => state.auth);
+  const { accessToken, user, isInitialized } = useSelector((state) => state.auth);
 
   useEffect(() => {
     // Try to refresh token on app load
@@ -35,9 +35,11 @@ function App() {
     dispatch(refreshTokenOnLoad());
   }, [dispatch]);
 
-  if (loading) {
-    return <MLoadingOverlay loading={loading} />;
+  if (!isInitialized) {
+    return <MLoadingOverlay loading={true} />;
   }
+
+  console.log("access token is", accessToken);
 
   return (
     <BrowserRouter>

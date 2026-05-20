@@ -13,6 +13,7 @@ import { LoacalVariables, setLocalValues } from "../../common/commonFunction";
 const initialState = {
   user: null,
   accessToken: null,
+  isInitialized: false,
 
   loading: false,
   error: null,
@@ -136,17 +137,17 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(refreshTokenOnLoad.fulfilled, (state, action) => {
+        console.log("action payload refresh is", action.payload);
         if (action.payload) {
           const payload = action.payload;
 
           state.loading = false;
+          state.isInitialized = true;
 
           const user = payload.user;
 
           // access token
           const accessToken = payload.accessToken;
-
-          const message = action.payload.message;
 
           state.user = user;
           state.accessToken = accessToken;
@@ -165,14 +166,14 @@ const authSlice = createSlice({
         }
         state.loading = false;
       })
-      .addCase(refreshTokenOnLoad.rejected, (state, action) => {
+      .addCase(refreshTokenOnLoad.rejected, (state) => {
         state.loading = false;
-        state.user = null;
+
+        state.isInitialized = true;
+
         state.accessToken = null;
-        // Don't set error for session expiration, it's not an error
-        if (action.payload !== null) {
-          state.error = action.payload;
-        }
+
+        state.user = null;
       })
 
       .addCase(logoutUser.pending, (state) => {

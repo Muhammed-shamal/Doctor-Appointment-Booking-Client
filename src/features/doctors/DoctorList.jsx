@@ -10,6 +10,10 @@ import { getDoctors, deleteDoctor } from "./doctorThunks";
 import { useDebounce } from "../../hooks/useDebounce";
 import { specializationOptions } from ".";
 import { can } from "../../utils/permissions";
+import { getDoctorSchedules } from "../schedules/scheduleThunks";
+import { bookAppointment } from "../appointments/appointmentThunks";
+import { socket } from "../../api/axiosInstance";
+import AppointmentBooking from "../../components/Modal/Hospital/AppointmentBooking";
 
 export default function DoctorList() {
   const dispatch = useDispatch();
@@ -18,7 +22,7 @@ export default function DoctorList() {
 
   // Redux state
   const { user } = useSelector((state) => state.auth);
-  const doctorState = useSelector((state) => state.doctor || {});
+  const doctorState = useSelector((state) => state.doctor);
   const {
     doctors = [],
     loading,
@@ -30,6 +34,7 @@ export default function DoctorList() {
   // Local state
   const [page, setPage] = useState(currentPage);
   const [rowsPerPage, setRowsPerPage] = useState(limit);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("");
@@ -48,6 +53,21 @@ export default function DoctorList() {
   const debouncedMinFee = useDebounce(minFee, 500);
   const debouncedMaxFee = useDebounce(maxFee, 500);
   const debouncedMinExperience = useDebounce(minExperience, 500);
+
+  const scheduleState = useSelector((state) => state.schedule);
+  const schedules = scheduleState.schedules;
+  const scheduleLoading = scheduleState.loading;
+
+  const appointmentState = useSelector((state) => state.appointment);
+  const bookingLoading = appointmentState.loading;
+  const bookingError = appointmentState.error;
+  const bookingSuccess = appointmentState.success;
+
+  // Booking modal state
+  const [openBookingModal, setOpenBookingModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [bookingStep, setBookingStep] = useState(0);
 
   // Fetch doctors when page, filters, or search changes
   useEffect(() => {
@@ -83,6 +103,116 @@ export default function DoctorList() {
     debouncedMaxFee,
     debouncedMinExperience,
   ]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on(
+      "slotBooked",
+
+      ({ scheduleId, slotId }) => {
+        dispatch(
+          markSlotBooked({
+            scheduleId,
+            slotId,
+          }),
+        );
+      },
+    );
+
+    socket.on(
+      "slotAvailable",
+
+      ({ scheduleId, slotId }) => {
+        dispatch(
+          markSlotAvailable({
+            scheduleId,
+            slotId,
+          }),
+        );
+      },
+    );
+
+    return () => {
+      socket.off("slotBooked");
+
+      socket.off("slotAvailable");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (bookingSuccess) {
+      setOpenBookingModal(false);
+      setSelectedDate(null);
+      setSelectedSlot(null);
+      setBookingStep(0);
+      const timer = setTimeout(() => {
+        dispatch(clearAppointmentSuccess());
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [bookingSuccess, dispatch]);
+
+  useEffect(() => {
+    if (bookingError) {
+      const timer = setTimeout(() => {
+        dispatch(clearAppointmentError());
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [bookingError, dispatch]);
+
+  const handleBookAppointment = () => {
+    setOpenBookingModal(true);
+    setBookingStep(0);
+  };
+
+  const handleSelectDate = (schedule) => {
+    setSelectedDate(schedule);
+    setBookingStep(1);
+  };
+
+  const handleSelectSlot = (slot) => {
+    setSelectedSlot(slot);
+    setBookingStep(2);
+  };
+
+  const handleConfirmBooking = async () => {
+    try {
+      if (!selectedDate || !selectedSlot) return;
+
+      const appointmentData = {
+        scheduleId: selectedDate._id,
+        slotId: selectedSlot._id,
+        doctorId: selectedDoctor._id,
+      };
+
+      dispatch(bookAppointment(appointmentData)).unwrap();
+      navigate("/appointments/list");
+      // window.location.href = "/appointments/list";
+    } catch (error) {
+      console.error("failed to book an appointment",error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenBookingModal(false);
+    setSelectedDate(null);
+    setSelectedSlot(null);
+    setBookingStep(0);
+  };
+
+  const getAvailableDates = () => {
+    return schedules.filter((schedule) => {
+      const availableSlots = schedule.slots?.filter((slot) => !slot.isBooked);
+      return availableSlots && availableSlots.length > 0;
+    });
+  };
+
+  const getAvailableSlotsForDate = () => {
+    if (!selectedDate) return [];
+    return selectedDate.slots?.filter((slot) => !slot.isBooked) || [];
+  };
 
   // Table columns configuration
   const columns = useMemo(
@@ -141,6 +271,15 @@ export default function DoctorList() {
       label: "View",
       handler: (doctor) => {
         navigate(`/doctor/detail/${doctor._id}`);
+      },
+    },
+
+    can(user.role, "appointments", "create") && {
+      label: "Book Appointment",
+      handler: (doctor) => {
+        dispatch(getDoctorSchedules(doctor._id));
+        setSelectedDoctor(doctor);
+        setOpenBookingModal(true);
       },
     },
 
@@ -222,6 +361,8 @@ export default function DoctorList() {
   };
 
   const totalPages = Math.ceil(totalDoctors / rowsPerPage);
+  const availableDates = getAvailableDates();
+  const availableSlots = getAvailableSlotsForDate();
 
   return (
     <>
@@ -282,6 +423,25 @@ export default function DoctorList() {
         }
         loading={deleteLoading}
         confirmAsync={true}
+      />
+
+      {/* Booking Modal */}
+      <AppointmentBooking
+        availableDates={availableDates}
+        availableSlots={availableSlots}
+        bookingStep={bookingStep}
+        bookingLoading={bookingLoading}
+        doctor={selectedDoctor}
+        openBookingModal={openBookingModal}
+        scheduleLoading={scheduleLoading}
+        selectedDate={selectedDate}
+        selectedSlot={selectedSlot}
+        theme={theme}
+        setBookingStep={setBookingStep}
+        handleCloseModal={handleCloseModal}
+        handleConfirmBooking={handleConfirmBooking}
+        handleSelectDate={handleSelectDate}
+        handleSelectSlot={handleSelectSlot}
       />
     </>
   );

@@ -40,6 +40,7 @@ function AppointmentBooking({
   handleConfirmBooking,
   handleSelectSlot
 }) {
+  if (!doctor) return null;
   return (
     <Dialog
       open={openBookingModal}

@@ -64,7 +64,6 @@ export default function ScheduleForm() {
 
   useEffect(() => {
     if (id && selectedSchedule && selectedSchedule._id === id) {
-      
       reset({
         doctor: selectedSchedule.doctor,
         date: selectedSchedule.date?.split("T")[0],
@@ -77,7 +76,7 @@ export default function ScheduleForm() {
 
   const onSubmit = async (data) => {
     try {
-      
+      console.log("schedule data is", data);
       if (id) {
         await dispatch(
           updateSchedule({ scheduleId: id, scheduleData: data }),
