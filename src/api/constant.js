@@ -1,6 +1,10 @@
+// //production
+// const BASE_URL = 'https://doctor-booking-server-pf3h.onrender.com/api';
+// const SOCKET_URL = 'https://doctor-booking-server-pf3h.onrender.com/';
+
 //development
-const BASE_URL = 'https://doctor-booking-server-pf3h.onrender.com/api';
-const SOCKET_URL = 'https://doctor-booking-server-pf3h.onrender.com/';
+const BASE_URL = 'http://localhost:5000/api';
+const SOCKET_URL = 'http://localhost:5000/';
 
 
 export const API_URL = {
